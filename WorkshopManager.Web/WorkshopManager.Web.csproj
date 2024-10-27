@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>aspnet-WorkshopManager.Web-24a71d8b-77b5-4d07-a616-e503693a8c86</UserSecretsId>
+    <UserSecretsId>aspnet-WorkshopManager.Web-18669a4e-98fa-4c4c-af34-2c4112f51e24</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

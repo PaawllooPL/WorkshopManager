@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using WorkshopManager.Web.Models;
+using WorkshopManager.Model.DataModels;
+using WorkshopManager.ViewModels.VM;
 
 namespace WorkshopManager.Web.Controllers
 {

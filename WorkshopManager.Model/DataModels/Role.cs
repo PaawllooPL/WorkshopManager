@@ -18,7 +18,6 @@ namespace WorkshopManager.Model.DataModels
         {
             RoleValue = roleValue;
             Name = name;
-
         }
     }
 }

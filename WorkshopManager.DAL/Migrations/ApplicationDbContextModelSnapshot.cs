@@ -294,7 +294,7 @@ namespace WorkshopManager.DAL.Migrations
 
                     b.ToTable("AspNetUsers", (string)null);
 
-                    b.HasDiscriminator<int>("UserType").HasValue(-1);
+                    b.HasDiscriminator<int>("UserType").HasValue(0);
 
                     b.UseTphMappingStrategy();
                 });
@@ -311,14 +311,14 @@ namespace WorkshopManager.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasDiscriminator().HasValue(1);
+                    b.HasDiscriminator().HasValue(2);
                 });
 
             modelBuilder.Entity("WorkshopManager.Model.DataModels.Owner", b =>
                 {
                     b.HasBaseType("WorkshopManager.Model.DataModels.User");
 
-                    b.HasDiscriminator().HasValue(0);
+                    b.HasDiscriminator().HasValue(1);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

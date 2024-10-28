@@ -24,7 +24,7 @@ namespace WorkshopManager.DAL.EF
             modelBuilder.Entity<User>()
                 .ToTable("AspNetUsers")
                 .HasDiscriminator<int>("UserType")
-                .HasValue<User>(-1)
+                .HasValue<User>((int)RoleValue.User)
                 .HasValue<Owner>((int)RoleValue.Owner)
                 .HasValue<Customer>((int)RoleValue.Customer);
 

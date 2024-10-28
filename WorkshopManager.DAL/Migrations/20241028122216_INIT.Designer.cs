@@ -12,8 +12,8 @@ using WorkshopManager.DAL.EF;
 namespace WorkshopManager.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241021220147_init")]
-    partial class init
+    [Migration("20241028122216_INIT")]
+    partial class INIT
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -297,7 +297,7 @@ namespace WorkshopManager.DAL.Migrations
 
                     b.ToTable("AspNetUsers", (string)null);
 
-                    b.HasDiscriminator<int>("UserType").HasValue(-1);
+                    b.HasDiscriminator<int>("UserType").HasValue(0);
 
                     b.UseTphMappingStrategy();
                 });
@@ -314,14 +314,14 @@ namespace WorkshopManager.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasDiscriminator().HasValue(1);
+                    b.HasDiscriminator().HasValue(2);
                 });
 
             modelBuilder.Entity("WorkshopManager.Model.DataModels.Owner", b =>
                 {
                     b.HasBaseType("WorkshopManager.Model.DataModels.User");
 
-                    b.HasDiscriminator().HasValue(0);
+                    b.HasDiscriminator().HasValue(1);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace WorkshopManager.Model.DataModels
 {
-    public class RepairOrderStatus
-    {
-        public int Id { get; set; }
-        public string StatusName { get; set; } = null!;
-
-    }
+	public enum RepairOrderStatusValue
+	{
+		Pending = 0,
+		InProgress = 1,
+		Finished = 2,
+	}
 }

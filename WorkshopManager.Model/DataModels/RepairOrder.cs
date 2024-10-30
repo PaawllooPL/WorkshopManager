@@ -9,14 +9,15 @@ namespace WorkshopManager.Model.DataModels
     public class RepairOrder
     {
         public int Id { get; set; }
-
-        public int CustomerId { get; set; }
+        public Client Client { get; set; } = null!;
+        public int ClientId { get; set; }
+        public Mechanic Mechanic { get; set; } = null!;
         public int? MechanicId { get; set; }
-        public string? RepairStatusId { get; set; }
+        public RepairOrderStatusValue Status { get; set; }
+        public IList<RepairTask> Tasks { get; set; } = null!;
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public decimal EntryEstimatedCost { get; set; }
-
         public string EntryIssueDescription { get; set; } = null!;
         public string RegistrationNumber { get; set; } = null!;
     }

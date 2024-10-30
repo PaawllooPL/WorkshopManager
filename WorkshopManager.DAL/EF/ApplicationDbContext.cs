@@ -13,6 +13,8 @@ namespace WorkshopManager.DAL.EF
     {
         public DbSet<RepairOrder> RepairOrders { get; set; }
         public DbSet<RepairTask> RepairTasks { get; set; }
+        public DbSet<Mechanic> Mechanics { get; set; }
+
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) { }
@@ -26,7 +28,7 @@ namespace WorkshopManager.DAL.EF
                 .HasDiscriminator<int>("UserType")
                 .HasValue<User>((int)RoleValue.User)
                 .HasValue<Owner>((int)RoleValue.Owner)
-                .HasValue<Customer>((int)RoleValue.Customer);
+                .HasValue<Client>((int)RoleValue.Client);
 
             modelBuilder.Entity<RepairOrder>()
                 .Property(r => r.EntryEstimatedCost)

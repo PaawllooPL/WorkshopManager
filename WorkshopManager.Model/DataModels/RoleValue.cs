@@ -10,6 +10,6 @@ namespace WorkshopManager.Model.DataModels
     {
         User = 0,
         Owner = 1,
-        Customer = 2
+        Client = 2
     }
 }

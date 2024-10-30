@@ -12,8 +12,8 @@ using WorkshopManager.DAL.EF;
 namespace WorkshopManager.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241028122216_INIT")]
-    partial class INIT
+    [Migration("20241030185218_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -76,10 +76,12 @@ namespace WorkshopManager.DAL.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -115,10 +117,12 @@ namespace WorkshopManager.DAL.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -126,6 +130,31 @@ namespace WorkshopManager.DAL.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("WorkshopManager.Model.DataModels.Mechanic", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BankAccountNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Mechanics");
                 });
 
             modelBuilder.Entity("WorkshopManager.Model.DataModels.RepairOrder", b =>
@@ -136,7 +165,7 @@ namespace WorkshopManager.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CustomerId")
+                    b.Property<int>("ClientId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("EndDate")
@@ -157,13 +186,17 @@ namespace WorkshopManager.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("RepairStatusId")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("MechanicId");
 
                     b.ToTable("RepairOrders");
                 });
@@ -190,6 +223,8 @@ namespace WorkshopManager.DAL.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RepairOrderId");
 
                     b.ToTable("RepairTasks");
                 });
@@ -302,7 +337,7 @@ namespace WorkshopManager.DAL.Migrations
                     b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("WorkshopManager.Model.DataModels.Customer", b =>
+            modelBuilder.Entity("WorkshopManager.Model.DataModels.Client", b =>
                 {
                     b.HasBaseType("WorkshopManager.Model.DataModels.User");
 
@@ -373,6 +408,44 @@ namespace WorkshopManager.DAL.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("WorkshopManager.Model.DataModels.RepairOrder", b =>
+                {
+                    b.HasOne("WorkshopManager.Model.DataModels.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WorkshopManager.Model.DataModels.Mechanic", "Mechanic")
+                        .WithMany("RepairOrders")
+                        .HasForeignKey("MechanicId");
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Mechanic");
+                });
+
+            modelBuilder.Entity("WorkshopManager.Model.DataModels.RepairTask", b =>
+                {
+                    b.HasOne("WorkshopManager.Model.DataModels.RepairOrder", "RepairOrder")
+                        .WithMany("Tasks")
+                        .HasForeignKey("RepairOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RepairOrder");
+                });
+
+            modelBuilder.Entity("WorkshopManager.Model.DataModels.Mechanic", b =>
+                {
+                    b.Navigation("RepairOrders");
+                });
+
+            modelBuilder.Entity("WorkshopManager.Model.DataModels.RepairOrder", b =>
+                {
+                    b.Navigation("Tasks");
                 });
 #pragma warning restore 612, 618
         }

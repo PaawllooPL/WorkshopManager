@@ -9,6 +9,7 @@ namespace WorkshopManager.Model.DataModels
     public class RepairTask
     {
         public int Id { get; set; }
+        public RepairOrder RepairOrder { get; set; } = null!;
         public int RepairOrderId { get; set; }
         public string? Description { get; set; }
         public decimal Cost { get; set; }

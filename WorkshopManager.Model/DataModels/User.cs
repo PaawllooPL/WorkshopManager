@@ -9,5 +9,6 @@ namespace WorkshopManager.Model.DataModels
 {
     public class User : IdentityUser<int>
     {
+
     }
 }

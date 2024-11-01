@@ -19,5 +19,12 @@ namespace WorkshopManager.Model.DataModels
             RoleValue = roleValue;
             Name = name;
         }
+        public Role(int id, string name, RoleValue roleValue)
+        {
+            Id = id;
+            RoleValue = roleValue;
+            Name = name;
+            NormalizedName = name.ToUpper();
+        }
     }
 }

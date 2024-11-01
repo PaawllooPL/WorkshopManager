@@ -8,8 +8,8 @@ namespace WorkshopManager.Model.DataModels
 {
     public enum RoleValue
     {
-        User = 0,
-        Owner = 1,
-        Client = 2
+        User = 1,
+        Owner = 2,
+        Client = 3,
     }
 }

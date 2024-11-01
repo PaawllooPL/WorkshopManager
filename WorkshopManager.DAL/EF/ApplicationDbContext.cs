@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using WorkshopManager.Model.DataModels;
@@ -37,6 +38,17 @@ namespace WorkshopManager.DAL.EF
             modelBuilder.Entity<RepairTask>()
                 .Property(r => r.Cost)
                 .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Role>().HasData(
+                new Role((int)RoleValue.User ,Enum.GetName(typeof(RoleValue), (int)RoleValue.User)!, RoleValue.User)
+            );
+            modelBuilder.Entity<Role>().HasData(
+                new Role((int)RoleValue.Owner, Enum.GetName(typeof(RoleValue), (int)RoleValue.Owner)!, RoleValue.Owner)
+            );
+            modelBuilder.Entity<Role>().HasData(
+                new Role((int)RoleValue.Client, Enum.GetName(typeof(RoleValue), (int)RoleValue.Client)!, RoleValue.Client)
+            );
+
         }
     }
 }

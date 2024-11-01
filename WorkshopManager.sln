@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkshopManager.Model", "WorkshopManager.Model\WorkshopManager.Model.csproj", "{16475FA6-06EA-413A-AC20-A08975E63DD2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkshopManager.Model", "WorkshopManager.Model\WorkshopManager.Model.csproj", "{16475FA6-06EA-413A-AC20-A08975E63DD2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkshopManager.DAL", "WorkshopManager.DAL\WorkshopManager.DAL.csproj", "{274B8073-FE13-4FAD-9BA1-1B06CDEB8B51}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkshopManager.DAL", "WorkshopManager.DAL\WorkshopManager.DAL.csproj", "{274B8073-FE13-4FAD-9BA1-1B06CDEB8B51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkshopManager.ViewModels", "WorkshopManager.ViewModels\WorkshopManager.ViewModels.csproj", "{C75C85B2-ECA4-4B99-8120-98ED26B726F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkshopManager.ViewModels", "WorkshopManager.ViewModels\WorkshopManager.ViewModels.csproj", "{C75C85B2-ECA4-4B99-8120-98ED26B726F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkshopManager.Web", "WorkshopManager.Web\WorkshopManager.Web.csproj", "{55F41C21-F439-4CA4-8142-8882343896B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkshopManager.Web", "WorkshopManager.Web\WorkshopManager.Web.csproj", "{55F41C21-F439-4CA4-8142-8882343896B8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkshopManager.Services", "WorkshopManager.Services\WorkshopManager.Services.csproj", "{7617DA9F-D668-4CCB-8464-C783834E0800}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkshopManager.Services", "WorkshopManager.Services\WorkshopManager.Services.csproj", "{7617DA9F-D668-4CCB-8464-C783834E0800}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

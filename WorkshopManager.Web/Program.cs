@@ -66,12 +66,17 @@ app.Run();
         DotNetEnv.Env.TraversePath().Load();
         var ownerEmail = System.Environment.GetEnvironmentVariable("OWNER_EMAIL");
         var ownerPassword = System.Environment.GetEnvironmentVariable("OWNER_PASSWORD");
+        var ownerFirstName = System.Environment.GetEnvironmentVariable("OWNER_FIRSTNAME");
+        var ownerLastName = System.Environment.GetEnvironmentVariable("OWNER_LASTNAME");
 
         if (String.IsNullOrEmpty(ownerEmail))
             throw new Exception("Environmental variable is missing owner email");
-
         if (String.IsNullOrEmpty(ownerPassword))
             throw new Exception("Environmental variable is missing owner password");
+        if (String.IsNullOrEmpty(ownerFirstName))
+            throw new Exception("Environmental variable is missing owner first name");
+        if (String.IsNullOrEmpty(ownerLastName))
+            throw new Exception("Environmental variable is missing owner last name");
 
         var checkCurrentAdmin = await userManager.FindByEmailAsync(ownerEmail);
 
@@ -79,6 +84,8 @@ app.Run();
             return;
 
         var owner = Activator.CreateInstance<Owner>();
+        owner.FirstName = ownerFirstName;
+        owner.LastName = ownerLastName;
         owner.UserName = ownerEmail;
         owner.Email = ownerEmail;
 

@@ -15,6 +15,7 @@ namespace WorkshopManager.Model.DataModels
         public int? MechanicId { get; set; }
         public RepairOrderStatusValue Status { get; set; }
         public IList<RepairTask> Tasks { get; set; } = null!;
+        public DateTime SubmissionDate { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public decimal EntryEstimatedCost { get; set; }

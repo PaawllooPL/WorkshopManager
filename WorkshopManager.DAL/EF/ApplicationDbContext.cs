@@ -48,6 +48,26 @@ namespace WorkshopManager.DAL.EF
             modelBuilder.Entity<Role>().HasData(
                 new Role((int)RoleValue.Client, Enum.GetName(typeof(RoleValue), (int)RoleValue.Client)!, RoleValue.Client)
             );
+            
+            //var ownerEmail = Environment.GetEnvironmentVariable("OWNER_EMAIL");
+            //var ownerPassword = Environment.GetEnvironmentVariable("OWNER_PASSWORD");
+
+            //if (String.IsNullOrEmpty(ownerEmail))
+            //    throw new Exception("Environmental variable is missing owner email");
+            
+            //if (String.IsNullOrEmpty(ownerPassword))
+            //    throw new Exception("Environmental variable is missing owner password");
+
+            //var passwordHasher = new PasswordHasher<User>();
+            //var owner = new User()
+            //{
+            //    Email = ownerEmail,
+            //    UserName = ownerEmail,
+            //};
+            //var passwordHashed = passwordHasher.HashPassword(owner, ownerPassword);
+            //owner.PasswordHash = passwordHashed;
+
+            //modelBuilder.Entity<User>().HasData(owner);
 
         }
     }

@@ -1,9 +1,9 @@
-﻿@model AddRepairOrder
+﻿@model AddRepairRequestVM
 
 <h1 style="text-align: center">Client</h1>
 <h3 style="text-align: center"> Dodaj nowe zlecenie </h3>
 
-<form asp-action="AddOrder" asp-controller="ClientRepair" method="post">
+<form asp-action="RepairRequest" asp-controller="ClientRepair" method="post">
     @Html.ValidationSummary()
 
     <div>

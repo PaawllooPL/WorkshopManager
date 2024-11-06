@@ -24,13 +24,13 @@ namespace WorkshopManager.Web.Controllers
             return View();
         }
 
-        public IActionResult AddOrder()
+        public IActionResult RepairRequest()
         {
             return View();
         }
 
         [HttpPost]
-        public IActionResult AddOrder(AddRepairOrder viewModel)
+        public IActionResult RepairRequest(AddRepairRequestVM viewModel)
         {
             var clientId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (clientId == null)

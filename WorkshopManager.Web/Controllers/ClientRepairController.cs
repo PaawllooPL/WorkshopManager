@@ -57,7 +57,8 @@ namespace WorkshopManager.Web.Controllers
                 ClientId = int.Parse(clientId),
                 SubmissionDate = DateTime.Now,
                 EntryIssueDescription = viewModel.EntryIssueDescription,
-                RegistrationNumber = viewModel.RegistrationNumber
+                RegistrationNumber = viewModel.RegistrationNumber,
+                Status = RepairOrderStatusValue.PendingEstimate,
             };
 
             _dbContext.RepairOrders.Add(order);

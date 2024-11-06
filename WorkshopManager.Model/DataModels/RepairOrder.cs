@@ -18,7 +18,7 @@ namespace WorkshopManager.Model.DataModels
         public DateTime SubmissionDate { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public decimal EntryEstimatedCost { get; set; }
+        public decimal? EntryEstimatedCost { get; set; }
         public string EntryIssueDescription { get; set; } = null!;
         public string RegistrationNumber { get; set; } = null!;
     }

@@ -8,8 +8,10 @@ namespace WorkshopManager.Model.DataModels
 {
 	public enum RepairOrderStatusValue
 	{
-		Pending = 0,
-		InProgress = 1,
-		Finished = 2,
-	}
+        PendingEstimate = 0,
+        ClientApproval = 1,
+        Accepted = 2,
+        InProgress = 3,
+        Completed = 4,
+    }
 }

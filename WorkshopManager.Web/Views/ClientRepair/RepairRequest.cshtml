@@ -1,0 +1,24 @@
+﻿@model AddRepairRequestVM
+
+<h1 style="text-align: center">Client</h1>
+<h3 style="text-align: center"> Dodaj nowe zlecenie </h3>
+
+<form asp-action="RepairRequest" asp-controller="ClientRepair" method="post">
+    @Html.ValidationSummary()
+
+    <div>
+        <label>Opis usterki</label>
+        @Html.TextAreaFor(model => model.EntryIssueDescription, new { rows = 5, cols = 40 })
+    </div>
+
+    <div>
+        <label>Numer rejestracyjny</label>
+        @Html.EditorFor(model => model.RegistrationNumber)
+    </div>
+
+    <div style="margin-top: 15px;">
+        <button type="submit" class="w3-button w3-blue w3-large w3-round w3-padding w3-hover-opacity w3-hover-shadow">
+            Dodaj zlecenie
+        </button>
+    </div>
+</form>

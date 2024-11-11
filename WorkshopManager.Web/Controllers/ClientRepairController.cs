@@ -6,6 +6,8 @@ using WorkshopManager.Model.DataModels;
 using WorkshopManager.ViewModels.VM;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 
 namespace WorkshopManager.Web.Controllers
 {
@@ -13,10 +15,12 @@ namespace WorkshopManager.Web.Controllers
     public class ClientRepairController : BaseController
     {
         private readonly ApplicationDbContext _dbContext;
+        private readonly UserManager<Client> _userManager;
 
-        public ClientRepairController(ILogger logger, ApplicationDbContext dbContext) : base(logger)
+        public ClientRepairController(ILogger logger, ApplicationDbContext dbContext, UserManager<Client> userManager) : base(logger)
         {
             _dbContext = dbContext;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
@@ -66,6 +70,60 @@ namespace WorkshopManager.Web.Controllers
 
             return RedirectToAction("Index");
         }
+        public async Task<IActionResult> UpdateContactInfo()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
 
+            var user1 = await _userManager.FindByIdAsync(userId);
+            if (user1 == null)
+            {
+                return NotFound();
+            }
+
+
+            var model = new UpdateContactInfoVM
+            {
+                PhoneNumber = user1.PhoneNumber ?? "",
+                FirstName = user1.FirstName ?? "",
+                LastName = user1.LastName ?? "",
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateContactInfo(UpdateContactInfoVM model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            user.FirstName = !model.FirstName.IsNullOrEmpty() ? model.FirstName : null;
+            user.LastName = !model.LastName.IsNullOrEmpty() ? model.LastName : null;
+            user.PhoneNumber = !model.PhoneNumber.IsNullOrEmpty() ? model.PhoneNumber : null;
+
+            _dbContext.Users.Update(user);
+            await _dbContext.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Udało się zaktualizować profil.";
+            return RedirectToAction("UpdateContactInfo");
+        }
     }
 }

@@ -20,7 +20,7 @@ namespace WorkshopManager.Web.Controllers
             _roleManager = roleManager;
             _userManager = userManager;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             if(_signInManager.IsSignedIn(User))
             {
@@ -28,7 +28,13 @@ namespace WorkshopManager.Web.Controllers
                 if(userIdClaim != null)
                 {
                     var user = _userManager.FindByIdAsync(userIdClaim.Value).Result;
-                
+                    
+                    if (user == null)
+                    {
+                        await _signInManager.SignOutAsync();
+                        return View();
+                    }
+
                     if (_userManager.IsInRoleAsync(user, Enum.GetName(typeof(RoleValue), (int)RoleValue.Client)!).Result)
                     {
                         return RedirectToAction("Index", "ClientRepair");

@@ -17,8 +17,18 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<Role>()
-                .AddRoleManager<RoleManager<Role>>()
-                .AddUserManager<UserManager<User>>()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddIdentityCore<Client>(options => options.SignIn.RequireConfirmedAccount = false)
+                .AddRoles<Role>()
+                .AddSignInManager<SignInManager<Client>>()
+                .AddUserManager<UserManager<Client>>()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddIdentityCore<Owner>(options => options.SignIn.RequireConfirmedAccount = false)
+                .AddRoles<Role>()
+                .AddSignInManager<SignInManager<Owner>>()
+                .AddUserManager<UserManager<Owner>>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddTransient(typeof(ILogger), typeof(Logger<Program>));
@@ -60,7 +70,7 @@ app.Run();
 {
     using (var scope = serviceProvider.CreateScope())
     {
-        var userManager = scope.ServiceProvider.GetService<UserManager<User>>()!;
+        var userManager = scope.ServiceProvider.GetService<UserManager<Owner>>()!;
         var roleManager = scope.ServiceProvider.GetService<RoleManager<Role>>()!;
 
         DotNetEnv.Env.TraversePath().Load();

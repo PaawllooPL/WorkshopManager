@@ -4,6 +4,7 @@ using WorkshopManager.DAL.EF;
 using WorkshopManager.Model.DataModels;
 using DotNetEnv;
 using Microsoft.Extensions.Options;
+using WorkshopManager.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,7 @@ builder.Services.AddIdentityCore<Owner>(options => options.SignIn.RequireConfirm
                 .AddUserManager<UserManager<Owner>>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+builder.Services.AddScoped<StatusDescriptionService>();
 builder.Services.AddTransient(typeof(ILogger), typeof(Logger<Program>));
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();

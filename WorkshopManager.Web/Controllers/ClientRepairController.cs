@@ -8,6 +8,7 @@ using System.Security.Claims;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using WorkshopManager.Services;
 
 namespace WorkshopManager.Web.Controllers
 {
@@ -16,11 +17,13 @@ namespace WorkshopManager.Web.Controllers
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly UserManager<Client> _userManager;
+        private readonly StatusDescriptionService _statusDescriptionService;
 
-        public ClientRepairController(ILogger logger, ApplicationDbContext dbContext, UserManager<Client> userManager) : base(logger)
+        public ClientRepairController(ILogger logger, ApplicationDbContext dbContext, UserManager<Client> userManager, StatusDescriptionService statusDescriptionService) : base(logger)
         {
             _dbContext = dbContext;
             _userManager = userManager;
+            _statusDescriptionService = statusDescriptionService;
         }
 
         public IActionResult Index()
@@ -124,6 +127,42 @@ namespace WorkshopManager.Web.Controllers
 
             TempData["SuccessMessage"] = "Udało się zaktualizować profil.";
             return RedirectToAction("UpdateContactInfo");
+        }
+
+
+        [Authorize(Roles = "Client")]
+        public IActionResult PendingEstimates()
+        {
+            var clientId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (clientId == null)
+            {
+                return Unauthorized();
+            }
+
+            var orders = _dbContext.RepairOrders
+                .Where(o => o.ClientId == int.Parse(clientId) && o.Status == RepairOrderStatusValue.PendingEstimate)
+                .ToList();
+
+            var pendingEstimatesVM = orders.Select(order => new PendingEstimateVM
+            {
+                Id = order.Id,
+                RegistrationNumber = order.RegistrationNumber,
+                EntryIssueDescription = order.EntryIssueDescription,
+                SubmissionDate = order.SubmissionDate,
+                StatusDescription = _statusDescriptionService.GetStatusDescription(order.Status),
+                EntryEstimatedCost = order.EntryEstimatedCost
+            }).ToList();
+
+            var viewModel = new PendingEstimatesVM
+            {
+                PendingEstimates = pendingEstimatesVM
+            };
+
+            return View(viewModel);
+        }
+        public string GetStatusDescription(RepairOrderStatusValue status)
+        {
+            return _statusDescriptionService.GetStatusDescription(status);
         }
     }
 }

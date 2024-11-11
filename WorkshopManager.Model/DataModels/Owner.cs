@@ -9,7 +9,6 @@ namespace WorkshopManager.Model.DataModels
 {
     public class Owner : User
     {
-        public string FirstName { get; set; } = null!;
-        public string LastName { get; set; } = null!;
+
     }
 }

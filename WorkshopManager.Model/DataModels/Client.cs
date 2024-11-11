@@ -9,8 +9,7 @@ namespace WorkshopManager.Model.DataModels
 {
     public class Client : User
     {
-        public string FirstName { get; set; } = null!;
-        public string LastName { get; set; } = null!;
-		IList<RepairOrder> repairOrders { get; set; } = null!;
-	}
+
+        IList<RepairOrder> repairOrders { get; set; } = null!;
+    }
 }

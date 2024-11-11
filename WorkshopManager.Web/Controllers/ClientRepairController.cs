@@ -125,5 +125,69 @@ namespace WorkshopManager.Web.Controllers
             TempData["SuccessMessage"] = "Udało się zaktualizować profil.";
             return RedirectToAction("UpdateContactInfo");
         }
+
+
+        [Authorize(Roles = "Client")]
+        public IActionResult PendingEstimates()
+        {
+            var clientId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (clientId == null)
+            {
+                return Unauthorized();
+            }
+
+            var orders = _dbContext.RepairOrders
+                .Where(o => o.ClientId == int.Parse(clientId) && o.Status == RepairOrderStatusValue.PendingEstimate)
+                .ToList();
+
+            var statusDescriptions = orders
+                .ToDictionary(
+                    order => order.Id,
+                    order => GetStatusDescription(order.Status)
+                );
+
+            ViewBag.StatusDescriptions = statusDescriptions;
+
+            return View(orders);
+        }
+        [HttpPost]
+        public IActionResult RespondToEstimate(int id, string response)
+        {
+            var order = _dbContext.RepairOrders.Find(id);
+            if (order == null || order.Status != RepairOrderStatusValue.PendingEstimate)
+            {
+                return NotFound();
+            }
+
+            if (response == "accept")
+            {
+                order.Status = RepairOrderStatusValue.ClientApproval; 
+            }
+            else if (response == "reject")
+            {
+                _dbContext.RepairOrders.Remove(order); 
+            }
+            else
+            {
+                return BadRequest("Invalid response type.");
+            }
+
+            _dbContext.SaveChanges();
+            return RedirectToAction("PendingEstimates");
+        }
+
+        // Czytelne statusy dla klientów 
+        public string GetStatusDescription(RepairOrderStatusValue status)
+        {
+            return status switch
+            {
+                RepairOrderStatusValue.PendingEstimate => "Oczekiwanie na wycenę przez warsztat",
+                RepairOrderStatusValue.ClientApproval => "Wyceny oczekują na akceptację przez klienta",
+                RepairOrderStatusValue.Accepted => "Zaakceptowane przez klienta",
+                RepairOrderStatusValue.InProgress => "W trakcie realizacji",
+                RepairOrderStatusValue.Completed => "Zakończone",
+                _ => "Nieznany status"
+            };
+        }
     }
 }

@@ -8,6 +8,6 @@ namespace WorkshopManager.ViewModels.VM
 {
     public class PendingEstimatesVM
     {
-        public List<PendingEstimateVM>? PendingEstimates { get; set; }
+        public List<PendingEstimateVM> PendingEstimates { get; set; } = null!;
     }
 }

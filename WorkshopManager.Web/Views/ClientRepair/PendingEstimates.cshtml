@@ -1,6 +1,6 @@
-﻿@model IEnumerable<WorkshopManager.Model.DataModels.RepairOrder>
+﻿@model WorkshopManager.ViewModels.VM.PendingEstimatesVM
 
-<h2 style="text-align: center">Przesłane zlecenia</h2>
+<h2 style="text-align: center">Przesłane zlecenia oczekujące na wycenę</h2>
 
 <div class="w3-container">
     <table class="w3-table-all w3-centered w3-hoverable w3-striped w3-card-4" style="width: 100%; table-layout: fixed;">
@@ -10,12 +10,12 @@
                 <th>Opis usterki</th>
                 <th>Data zgłoszenia</th>
                 <th>Status</th>
-                <th>Kwota wyceny</th> <!-- Nowa kolumna -->
+                <th>Kwota wyceny</th>
                 <th>Akcje</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var order in Model)
+            @foreach (var order in Model.PendingEstimates)
             {
                 <tr>
                     <td>@order.RegistrationNumber</td>
@@ -41,47 +41,16 @@
 
                     <td>@order.SubmissionDate.ToShortDateString()</td>
 
-                    <td>
-                        @if (ViewBag.StatusDescriptions != null && ViewBag.StatusDescriptions.ContainsKey(order.Id))
-                        {
-                            @ViewBag.StatusDescriptions[order.Id]
-                        }
-                    </td>
+                    <td>@order.StatusDescription</td>
 
                     <td>
-                        @if (order.Status == WorkshopManager.Model.DataModels.RepairOrderStatusValue.PendingEstimate)
+                        @if (order.EntryEstimatedCost.HasValue)
                         {
-                            @if (order.EntryEstimatedCost.HasValue)
-                            {
-                                @order.EntryEstimatedCost.Value.ToString("C")
-                            }
-                            else
-                            {
-                                <span>Niewycenione</span>
-                            }
+                            @order.EntryEstimatedCost.Value.ToString("C")
                         }
                         else
                         {
                             <span>Niewycenione</span>
-                        }
-                    </td>
-
-
-                    <td>
-                        @if (order.Status == WorkshopManager.Model.DataModels.RepairOrderStatusValue.ClientApproval)
-                        {
-                            <form asp-action="RespondToEstimate" asp-route-id="@order.Id" method="post" style="display:inline;">
-                                <input type="hidden" name="response" value="accept" />
-                                <button type="submit" class="w3-button w3-green w3-round w3-margin-right">Akceptuj</button>
-                            </form>
-                            <form asp-action="RespondToEstimate" asp-route-id="@order.Id" method="post" style="display:inline;">
-                                <input type="hidden" name="response" value="reject" />
-                                <button type="submit" class="w3-button w3-red w3-round">Odrzuć</button>
-                            </form>
-                        }
-                        else
-                        {
-                            <span class="w3-text-grey">Brak akcji</span>
                         }
                     </td>
                 </tr>

@@ -8,6 +8,7 @@ using System.Security.Claims;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using WorkshopManager.Services;
 
 namespace WorkshopManager.Web.Controllers
 {
@@ -16,11 +17,13 @@ namespace WorkshopManager.Web.Controllers
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly UserManager<Client> _userManager;
+        private readonly StatusDescriptionService _statusDescriptionService;
 
-        public ClientRepairController(ILogger logger, ApplicationDbContext dbContext, UserManager<Client> userManager) : base(logger)
+        public ClientRepairController(ILogger logger, ApplicationDbContext dbContext, UserManager<Client> userManager, StatusDescriptionService statusDescriptionService) : base(logger)
         {
             _dbContext = dbContext;
             _userManager = userManager;
+            _statusDescriptionService = statusDescriptionService;
         }
 
         public IActionResult Index()
@@ -140,54 +143,26 @@ namespace WorkshopManager.Web.Controllers
                 .Where(o => o.ClientId == int.Parse(clientId) && o.Status == RepairOrderStatusValue.PendingEstimate)
                 .ToList();
 
-            var statusDescriptions = orders
-                .ToDictionary(
-                    order => order.Id,
-                    order => GetStatusDescription(order.Status)
-                );
+            var pendingEstimatesVM = orders.Select(order => new PendingEstimateVM
+            {
+                Id = order.Id,
+                RegistrationNumber = order.RegistrationNumber,
+                EntryIssueDescription = order.EntryIssueDescription,
+                SubmissionDate = order.SubmissionDate,
+                StatusDescription = _statusDescriptionService.GetStatusDescription(order.Status),
+                EntryEstimatedCost = order.EntryEstimatedCost
+            }).ToList();
 
-            ViewBag.StatusDescriptions = statusDescriptions;
+            var viewModel = new PendingEstimatesVM
+            {
+                PendingEstimates = pendingEstimatesVM
+            };
 
-            return View(orders);
+            return View(viewModel);
         }
-        [HttpPost]
-        public IActionResult RespondToEstimate(int id, string response)
-        {
-            var order = _dbContext.RepairOrders.Find(id);
-            if (order == null || order.Status != RepairOrderStatusValue.PendingEstimate)
-            {
-                return NotFound();
-            }
-
-            if (response == "accept")
-            {
-                order.Status = RepairOrderStatusValue.ClientApproval; 
-            }
-            else if (response == "reject")
-            {
-                _dbContext.RepairOrders.Remove(order); 
-            }
-            else
-            {
-                return BadRequest("Invalid response type.");
-            }
-
-            _dbContext.SaveChanges();
-            return RedirectToAction("PendingEstimates");
-        }
-
-        // Czytelne statusy dla klientów 
         public string GetStatusDescription(RepairOrderStatusValue status)
         {
-            return status switch
-            {
-                RepairOrderStatusValue.PendingEstimate => "Oczekiwanie na wycenę przez warsztat",
-                RepairOrderStatusValue.ClientApproval => "Wyceny oczekują na akceptację przez klienta",
-                RepairOrderStatusValue.Accepted => "Zaakceptowane przez klienta",
-                RepairOrderStatusValue.InProgress => "W trakcie realizacji",
-                RepairOrderStatusValue.Completed => "Zakończone",
-                _ => "Nieznany status"
-            };
+            return _statusDescriptionService.GetStatusDescription(status);
         }
     }
 }

@@ -28,9 +28,9 @@
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
-                
-            
-               
+                <a class="btn btn-primary" asp-controller="OwnerRepair" asp-action="RespondToRequest" asp-route-id="@item.Id">
+                     Details
+                 </a>
             </td>
         </tr>
 }

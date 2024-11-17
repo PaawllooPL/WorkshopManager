@@ -9,5 +9,7 @@ namespace WorkshopManager.ViewModels.VM
     public class PendingEstimatesVM
     {
         public List<PendingEstimateVM> PendingEstimates { get; set; } = null!;
+        public List<PendingEstimateVM> ClientApprovals { get; set; } = null!;
+
     }
 }

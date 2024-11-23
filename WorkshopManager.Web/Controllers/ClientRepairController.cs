@@ -129,7 +129,6 @@ namespace WorkshopManager.Web.Controllers
             return RedirectToAction("UpdateContactInfo");
         }
 
-
         [Authorize(Roles = "Client")]
         public IActionResult PendingEstimates()
         {
@@ -138,31 +137,83 @@ namespace WorkshopManager.Web.Controllers
             {
                 return Unauthorized();
             }
-
             var orders = _dbContext.RepairOrders
-                .Where(o => o.ClientId == int.Parse(clientId) && o.Status == RepairOrderStatusValue.PendingEstimate)
+                .Where(o => o.ClientId == int.Parse(clientId) &&
+                            (o.Status == RepairOrderStatusValue.PendingEstimate || o.Status == RepairOrderStatusValue.ClientApproval))
                 .ToList();
 
-            var pendingEstimatesVM = orders.Select(order => new PendingEstimateVM
-            {
-                Id = order.Id,
-                RegistrationNumber = order.RegistrationNumber,
-                EntryIssueDescription = order.EntryIssueDescription,
-                SubmissionDate = order.SubmissionDate,
-                StatusDescription = _statusDescriptionService.GetStatusDescription(order.Status),
-                EntryEstimatedCost = order.EntryEstimatedCost
-            }).ToList();
+            var pendingEstimatesVM = orders
+                .Where(order => order.Status == RepairOrderStatusValue.PendingEstimate)
+                .Select(order => new PendingEstimateVM
+                {
+                    Id = order.Id,
+                    RegistrationNumber = order.RegistrationNumber,
+                    EntryIssueDescription = order.EntryIssueDescription,
+                    SubmissionDate = order.SubmissionDate,
+                    StatusDescription = _statusDescriptionService.GetStatusDescription(order.Status),
+                    EntryEstimatedCost = order.EntryEstimatedCost
+                }).ToList();
+
+            var clientApprovalsVM = orders
+                .Where(order => order.Status == RepairOrderStatusValue.ClientApproval)
+                .Select(order => new PendingEstimateVM
+                {
+                    Id = order.Id,
+                    RegistrationNumber = order.RegistrationNumber,
+                    EntryIssueDescription = order.EntryIssueDescription,
+                    SubmissionDate = order.SubmissionDate,
+                    StatusDescription = _statusDescriptionService.GetStatusDescription(order.Status),
+                    EntryEstimatedCost = order.EntryEstimatedCost
+                }).ToList();
 
             var viewModel = new PendingEstimatesVM
             {
-                PendingEstimates = pendingEstimatesVM
+                PendingEstimates = pendingEstimatesVM,
+                ClientApprovals = clientApprovalsVM
             };
 
             return View(viewModel);
         }
+
         public string GetStatusDescription(RepairOrderStatusValue status)
         {
             return _statusDescriptionService.GetStatusDescription(status);
         }
+
+        [HttpPost]
+        public IActionResult RespondToEstimate(int id, string response)
+        {
+            var clientId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (clientId == null)
+            {
+                return Unauthorized();
+            }
+
+            var order = _dbContext.RepairOrders.FirstOrDefault(o => o.Id == id && o.ClientId == int.Parse(clientId));
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            if (response == "accept")
+            {
+                order.Status = RepairOrderStatusValue.Accepted;
+                TempData["SuccessMessage"] = "Wycena została zaakceptowana.";
+            }
+            else if (response == "reject")
+            {
+                _dbContext.RepairOrders.Remove(order);
+                TempData["SuccessMessage"] = "Wycena została odrzucona, a zlecenie usunięte.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Nieznana akcja.";
+                return RedirectToAction("PendingEstimates");
+            }
+
+            _dbContext.SaveChanges();
+            return RedirectToAction("PendingEstimates");
+        }
+
     }
 }

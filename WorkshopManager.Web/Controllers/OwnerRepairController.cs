@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using WorkshopManager.DAL.EF;
 using WorkshopManager.Model.DataModels;
+using WorkshopManager.Services;
 using WorkshopManager.ViewModels.VM;
 
 namespace WorkshopManager.Web.Controllers
@@ -12,9 +13,11 @@ namespace WorkshopManager.Web.Controllers
     public class OwnerRepairController : BaseController
     {
         private readonly ApplicationDbContext _dbContext;
-        public OwnerRepairController(ILogger logger, ApplicationDbContext context) : base(logger)
+        private readonly StatusDescriptionService _statusDescriptionService;
+        public OwnerRepairController(ILogger logger, ApplicationDbContext context, StatusDescriptionService statusDescriptionService) : base(logger)
         {
             _dbContext = context;
+            _statusDescriptionService = statusDescriptionService;
         }
 
         public IActionResult Index()
@@ -24,17 +27,41 @@ namespace WorkshopManager.Web.Controllers
 
         public IActionResult PendingRequests()
         {
-            List<PendingEstimateVM> model = _dbContext.RepairOrders
-                .Where(ro => ro.Status == RepairOrderStatusValue.PendingEstimate || ro.Status == RepairOrderStatusValue.ClientApproval)
-                .Select(ro => new PendingEstimateVM
-                {
-                    Id = ro.Id,
-                    SubmissionDate = ro.SubmissionDate,
-                    Status = ro.Status
-                })
+            // Zlecenia bez wyceny 
+            var pendingEstimateList = _dbContext.RepairOrders
+             .Where(ro => ro.Status == RepairOrderStatusValue.PendingEstimate)
+             .Select(ro => new PendingEstimateVM
+             {
+                 Id = ro.Id,
+                 RegistrationNumber = ro.RegistrationNumber,
+                 EntryIssueDescription = ro.EntryIssueDescription,
+                 SubmissionDate = ro.SubmissionDate,
+                 StatusDescription = _statusDescriptionService.GetStatusDescription(ro.Status),
+                 EntryEstimatedCost = ro.EntryEstimatedCost
+             })
                 .ToList();
 
-            return View(model);
+            // Zlecenia wycenione przez wlasiciela, oczekujące na akceptację klienta
+            var clientApprovalList = _dbContext.RepairOrders
+             .Where(ro => ro.Status == RepairOrderStatusValue.ClientApproval)
+             .Select(ro => new ClientApprovalVM
+             {
+                 Id = ro.Id,
+                 RegistrationNumber = ro.RegistrationNumber,
+                 EntryIssueDescription = ro.EntryIssueDescription,
+                 SubmissionDate = ro.SubmissionDate,
+                 StatusDescription = _statusDescriptionService.GetStatusDescription(ro.Status),
+                 EntryEstimatedCost = ro.EntryEstimatedCost
+             })
+                .ToList();
+
+            var viewModel = new PendingRequestsVM
+            {
+                PendingEstimates = pendingEstimateList,
+                ClientApprovals = clientApprovalList
+            };
+
+            return View(viewModel);
         }
 
         public IActionResult RespondToRequest(int id)
@@ -53,7 +80,7 @@ namespace WorkshopManager.Web.Controllers
                 RegistrationNumber = repairOrder.RegistrationNumber,
                 EntryIssueDescription = repairOrder.EntryIssueDescription,
                 SubmissionDate = repairOrder.SubmissionDate,
-                Status = repairOrder.Status,
+                StatusDescription = _statusDescriptionService.GetStatusDescription(repairOrder.Status),
                 EntryEstimatedCost = repairOrder.EntryEstimatedCost
             };
 
@@ -78,9 +105,7 @@ namespace WorkshopManager.Web.Controllers
 
             return RedirectToAction("PendingRequests");
         }
-
-
-        [HttpGet]
+        [HttpPost]
         public IActionResult RejectRequest(int id)
         {
             var repairOrder = _dbContext.RepairOrders.FirstOrDefault(ro => ro.Id == id);
@@ -93,7 +118,7 @@ namespace WorkshopManager.Web.Controllers
             _dbContext.RepairOrders.Remove(repairOrder);
 
             _dbContext.SaveChanges();
-            
+
             return RedirectToAction("PendingRequests");
         }
     }

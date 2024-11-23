@@ -1,38 +1,74 @@
-﻿@model IEnumerable<WorkshopManager.ViewModels.VM.PendingEstimateVM>
+﻿@model WorkshopManager.ViewModels.VM.PendingRequestsVM
 
 @{
-    ViewData["Title"] = "PendingRequests";
+	ViewData["Title"] = "PendingRequests";
 }
 
-<h1>PendingRequests</h1>
+<h2>Zlecenia bez wyceny</h2>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.SubmissionDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model ?? Enumerable.Empty<PendingEstimateVM>()) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.SubmissionDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                <a class="btn btn-primary" asp-controller="OwnerRepair" asp-action="RespondToRequest" asp-route-id="@item.Id">
-                     Details
-                 </a>
-            </td>
-        </tr>
-}
-    </tbody>
+<table class="w3-table-all w3-centered w3-hoverable w3-striped w3-card-4" style="width: 100%; table-layout: fixed;">
+	<thead>
+		<tr>
+			<th>
+				Data zgłoszenia
+			</th>
+			<th>
+				Status
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model.PendingEstimates ?? Enumerable.Empty<PendingEstimateVM>())
+		{
+			<tr>
+				<td>
+					@Html.DisplayFor(modelItem => item.SubmissionDate)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.StatusDescription)
+				</td>
+				<td>
+					<a class="w3-bar-item w3-button w3-blue w3-small w3-round w3-padding w3-hover-opacity w3-hover-shadow"
+					   asp-controller="OwnerRepair" asp-action="RespondToRequest" asp-route-id="@item.Id">
+						Szczegóły
+					</a>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
+
+<br />
+
+<h2>Zlecenia wycenione</h2>
+<table class="w3-table-all w3-centered w3-hoverable w3-striped w3-card-4" style="width: 100%; table-layout: fixed;">
+	<thead>
+		<tr>
+			<th>
+				Data zgłoszenia
+			</th>
+			<th>
+				Status
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model.ClientApprovals ?? Enumerable.Empty<ClientApprovalVM>())
+		{
+			<tr>
+				<td>
+					@Html.DisplayFor(modelItem => item.SubmissionDate)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.StatusDescription)
+				</td>
+				<td>
+					<a class="w3-bar-item w3-button w3-blue w3-small w3-round w3-padding w3-hover-opacity w3-hover-shadow"
+					   asp-controller="OwnerRepair" asp-action="RespondToRequest" asp-route-id="@item.Id">
+						Szczegóły
+					</a>
+				</td>
+			</tr>
+		}
+	</tbody>
 </table>

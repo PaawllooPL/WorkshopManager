@@ -215,5 +215,56 @@ namespace WorkshopManager.Web.Controllers
             return RedirectToAction("PendingEstimates");
         }
 
+        [Authorize(Roles = "Client")]
+        public IActionResult ActiveRepairs()
+        {
+            var clientId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (clientId == null)
+            {
+                return Unauthorized();
+            }
+
+            var orders = _dbContext.RepairOrders
+                .Where(o => o.ClientId == int.Parse(clientId) &&
+                            (o.Status == RepairOrderStatusValue.Accepted || o.Status == RepairOrderStatusValue.InProgress))
+                .ToList();
+
+            var acceptedOrders = orders
+                .Where(order => order.Status == RepairOrderStatusValue.Accepted)
+                .Select(order => new ActiveRepairVM
+                {
+                    Id = order.Id,
+                    RegistrationNumber = order.RegistrationNumber,
+                    EntryIssueDescription = order.EntryIssueDescription,
+                    SubmissionDate = order.SubmissionDate,
+                    StatusDescription = _statusDescriptionService.GetStatusDescription(order.Status),
+                    EntryEstimatedCost = order.EntryEstimatedCost
+                })
+                .ToList();
+
+            var inProgressOrders = orders
+                .Where(order => order.Status == RepairOrderStatusValue.InProgress)
+                .Select(order => new ActiveRepairVM
+                {
+                    Id = order.Id,
+                    RegistrationNumber = order.RegistrationNumber,
+                    EntryIssueDescription = order.EntryIssueDescription,
+                    SubmissionDate = order.SubmissionDate,
+                    StatusDescription = _statusDescriptionService.GetStatusDescription(order.Status),
+                    EntryEstimatedCost = order.EntryEstimatedCost
+                })
+                .ToList();
+
+            var combinedOrders = inProgressOrders.Concat(acceptedOrders).ToList();
+
+            var viewModel = new ActiveRepairsVM
+            {
+                AcceptedOrders = acceptedOrders,
+                InProgressOrders = inProgressOrders
+            };
+
+            return View(viewModel);
+        }
+
     }
 }

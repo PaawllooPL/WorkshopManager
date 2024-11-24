@@ -264,5 +264,36 @@ namespace WorkshopManager.Web.Controllers
             return View(viewModel);
         }
 
+        [Authorize(Roles = "Client")]
+        public IActionResult ActiveRepairDetails(int id)
+        {
+            var clientId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (clientId == null)
+            {
+                return Unauthorized();
+            }
+
+            var order = _dbContext.RepairOrders
+                .Where(o => o.ClientId == int.Parse(clientId) && o.Id == id)
+                .FirstOrDefault();
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new ActiveRepairDetailVM
+            {
+                Id = order.Id,
+                RegistrationNumber = order.RegistrationNumber,
+                EntryIssueDescription = order.EntryIssueDescription,
+                SubmissionDate = order.SubmissionDate,
+                StatusDescription = _statusDescriptionService.GetStatusDescription(order.Status),
+                EntryEstimatedCost = order.EntryEstimatedCost
+            };
+
+            return View("ActiveRepairDetails", viewModel);
+        }
+
     }
 }

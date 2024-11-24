@@ -1,0 +1,68 @@
+﻿@model WorkshopManager.ViewModels.VM.ActiveRepairsVM
+
+@{
+	ViewData["Title"] = "ActiveRepairs";
+}
+
+<h1 style="text-align: center">Aktywne naprawy</h1>
+
+<table class="w3-table-all w3-centered w3-hoverable w3-striped w3-card-4" style="width: 100%; table-layout: fixed;">
+	<thead>
+		<tr class="w3-light-grey">
+			<th>Numer rejestracyjny</th>
+			<th>Opis usterki</th>
+			<th>Data zgłoszenia</th>
+			<th>Kwota wyceny</th>
+			<th>Status</th>
+			<th>Akcje</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model.InProgressOrders)
+		{
+			<tr>
+				<td>
+					@Html.DisplayFor(modelItem => item.RegistrationNumber)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.EntryIssueDescription)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.SubmissionDate)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.EntryEstimatedCost)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.StatusDescription)
+				</td>
+				<td>
+					<a href="@Url.Action("ActiveRepairDetails", "OwnerRepair", new { id = item.Id })" class="w3-button w3-small w3-blue w3-round">Szczegóły</a>
+				</td>
+			</tr>
+		}
+		@foreach (var item in Model.AcceptedOrders)
+		{
+			<tr>
+				<td>
+					@Html.DisplayFor(modelItem => item.RegistrationNumber)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.EntryIssueDescription)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.SubmissionDate)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.EntryEstimatedCost)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.StatusDescription)
+				</td>
+				<td>
+					<a href="@Url.Action("ActiveRepairDetails", "OwnerRepair", new { id = item.Id })" class="w3-button w3-small w3-blue w3-round">Szczegóły</a>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>

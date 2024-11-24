@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Security.Claims;
 using WorkshopManager.DAL.EF;
 using WorkshopManager.Model.DataModels;
 using WorkshopManager.Services;
@@ -120,6 +121,82 @@ namespace WorkshopManager.Web.Controllers
             _dbContext.SaveChanges();
 
             return RedirectToAction("PendingRequests");
+        }
+
+        public IActionResult ActiveRepairs()
+        {
+            var ownerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (ownerId == null)
+            {
+                return Unauthorized();
+            }
+
+            var orders = _dbContext.RepairOrders
+                .Where(o => (o.Status == RepairOrderStatusValue.Accepted || o.Status == RepairOrderStatusValue.InProgress))
+                .ToList();
+
+            var acceptedOrders = orders
+                .Where(order => order.Status == RepairOrderStatusValue.Accepted)
+                .Select(order => new ActiveRepairVM
+                {
+                    Id = order.Id,
+                    RegistrationNumber = order.RegistrationNumber,
+                    EntryIssueDescription = order.EntryIssueDescription,
+                    SubmissionDate = order.SubmissionDate,
+                    StatusDescription = _statusDescriptionService.GetStatusDescription(order.Status),
+                    EntryEstimatedCost = order.EntryEstimatedCost
+                })
+                .ToList();
+
+            var inProgressOrders = orders
+                .Where(order => order.Status == RepairOrderStatusValue.InProgress)
+                .Select(order => new ActiveRepairVM
+                {
+                    Id = order.Id,
+                    RegistrationNumber = order.RegistrationNumber,
+                    EntryIssueDescription = order.EntryIssueDescription,
+                    SubmissionDate = order.SubmissionDate,
+                    StatusDescription = _statusDescriptionService.GetStatusDescription(order.Status),
+                    EntryEstimatedCost = order.EntryEstimatedCost
+                })
+                .ToList();
+
+            var viewModel = new ActiveRepairsVM
+            {
+                AcceptedOrders = acceptedOrders,
+                InProgressOrders = inProgressOrders
+            };
+
+            return View(viewModel);
+        }
+
+        public IActionResult ActiveRepairDetails(int id)
+        {
+            var ownerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (ownerId == null)
+            {
+                return Unauthorized();
+            }
+
+            var order = _dbContext.RepairOrders
+               .FirstOrDefault(o => o.Id == id);
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new ActiveRepairDetailVM
+            {
+                Id = order.Id,
+                RegistrationNumber = order.RegistrationNumber,
+                EntryIssueDescription = order.EntryIssueDescription,
+                SubmissionDate = order.SubmissionDate,
+                StatusDescription = _statusDescriptionService.GetStatusDescription(order.Status),
+                EntryEstimatedCost = order.EntryEstimatedCost
+            };
+
+            return View("ActiveRepairDetails", viewModel);
         }
     }
 }

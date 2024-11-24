@@ -1,0 +1,49 @@
+﻿@model WorkshopManager.ViewModels.VM.ActiveRepairDetailVM
+
+@{
+    ViewData["Title"] = "ActiveRepairDetails";
+}
+
+<h1>Szczegóły zlecenia</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            Id
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+        <dt class = "col-sm-2">
+            Numer rejestracyjny
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.RegistrationNumber)
+        </dd>
+        <dt class = "col-sm-2">
+            Opis usterki
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.EntryIssueDescription)
+        </dd>
+        <dt class = "col-sm-2">
+            Data zgłoszenia
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.SubmissionDate)
+        </dd>
+        <dt class = "col-sm-2">
+            Status
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.StatusDescription)
+        </dd>
+        <dt class = "col-sm-2">
+            Szacunkowy koszt
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.EntryEstimatedCost)
+        </dd>
+    </dl>
+</div>

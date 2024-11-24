@@ -14,6 +14,7 @@
 			<th>Data zgłoszenia</th>
 			<th>Kwota wyceny</th>
 			<th>Status</th>
+			<th>Akcje</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -35,6 +36,9 @@
 				<td>
 					@Html.DisplayFor(modelItem => item.StatusDescription)
 				</td>
+				<td>
+					<a href="@Url.Action("ActiveRepairDetails", "OwnerRepair", new { id = item.Id })" class="w3-button w3-small w3-blue w3-round">Szczegóły</a>
+				</td>
 			</tr>
 		}
 		@foreach (var item in Model.AcceptedOrders)
@@ -54,6 +58,9 @@
 				</td>
 				<td>
 					@Html.DisplayFor(modelItem => item.StatusDescription)
+				</td>
+				<td>
+					<a href="@Url.Action("ActiveRepairDetails", "OwnerRepair", new { id = item.Id })" class="w3-button w3-small w3-blue w3-round">Szczegóły</a>
 				</td>
 			</tr>
 		}

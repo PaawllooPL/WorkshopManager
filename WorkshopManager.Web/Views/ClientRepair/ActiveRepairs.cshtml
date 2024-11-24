@@ -13,6 +13,7 @@
                     <th>Data zgłoszenia</th>
                     <th>Kwota wyceny</th>
                     <th>Status</th>
+                    <th>Akcje</th>
                 </tr>
             </thead>
             <tbody>
@@ -52,6 +53,10 @@
                         </td>
 
                         <td>@order.StatusDescription</td>
+
+                        <td>
+                            <a href="@Url.Action("ActiveRepairDetails", "ClientRepair", new { id = order.Id })" class="w3-button w3-small w3-blue w3-round">Szczegóły</a>
+                        </td>
                     </tr>
                 }
             </tbody>
@@ -62,7 +67,6 @@
         <p>Brak aktywnych zleceń.</p>
     }
 </div>
-
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {

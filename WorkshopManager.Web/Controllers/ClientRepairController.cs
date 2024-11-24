@@ -255,8 +255,6 @@ namespace WorkshopManager.Web.Controllers
                 })
                 .ToList();
 
-            var combinedOrders = inProgressOrders.Concat(acceptedOrders).ToList();
-
             var viewModel = new ActiveRepairsVM
             {
                 AcceptedOrders = acceptedOrders,

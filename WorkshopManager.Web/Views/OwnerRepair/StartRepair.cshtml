@@ -1,0 +1,37 @@
+﻿@model WorkshopManager.ViewModels.VM.StartRepairFormVM;
+@{
+	ViewData["Title"] = "ActiveRepairs";
+}
+
+<h1 style="text-align: center">Wybierz mechanika</h1>
+
+<table class="w3-table-all w3-centered w3-hoverable w3-striped w3-card-4" style="width: 100%; table-layout: fixed;">
+	<thead>
+		<tr class="w3-light-grey">
+			<th>Imie</th>
+			<th>Nazwisko</th>
+			<th>Akcje</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var mechanic in Model.Mechanics)
+		{
+			<tr>
+				<td>
+					@Html.DisplayFor(modelItem => mechanic.FirstName)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => mechanic.LastName)
+				</td>
+				<td>
+					<form method="post" asp-controller="OwnerRepair" asp-action="StartRepair">
+						<input type="hidden" name="RepairId" value="@Model.Id"/>
+						<input type="hidden" name="MechanicId" value="@mechanic.Id"/>
+						<button type="submit" class="w3-button w3-small w3-blue w3-round">Wybierz</button>
+					</form>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
+

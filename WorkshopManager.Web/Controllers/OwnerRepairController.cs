@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using System.Diagnostics;
 using System.Security.Claims;
 using WorkshopManager.DAL.EF;
 using WorkshopManager.Model.DataModels;
 using WorkshopManager.Services;
 using WorkshopManager.ViewModels.VM;
+using static NuGet.Packaging.PackagingConstants;
 
 namespace WorkshopManager.Web.Controllers
 {
@@ -185,7 +187,7 @@ namespace WorkshopManager.Web.Controllers
             {
                 return NotFound();
             }
-
+            
             var viewModel = new ActiveRepairDetailVM
             {
                 Id = order.Id,
@@ -197,6 +199,34 @@ namespace WorkshopManager.Web.Controllers
             };
 
             return View("ActiveRepairDetails", viewModel);
+        }
+        public IActionResult StartRepair(int id)
+        {
+            var repair = _dbContext.RepairOrders.FirstOrDefault(o => o.Id == id);
+            if (repair == null || repair.Status != RepairOrderStatusValue.Accepted)
+            {
+                NotFound();
+            }
+            var mechanics = _dbContext.Mechanics.Select(m => new MechanicVM(m.Id, m.FirstName, m.LastName)).ToList();
+            return View(new StartRepairFormVM(id, mechanics));
+        }
+        [HttpPost]
+        public IActionResult StartRepair(StartRepairSubmitFormVM formData)
+        {
+            var repair = _dbContext.RepairOrders.FirstOrDefault(r => r.Id == formData.RepairId);
+            if (repair == null)
+                return NotFound();
+
+            var mechanic = _dbContext.Mechanics.FirstOrDefault(m => m.Id == formData.MechanicId);
+            if (mechanic == null)
+                return NotFound();
+            
+            repair.Mechanic = mechanic;
+            repair.Status = RepairOrderStatusValue.InProgress;
+
+            _dbContext.SaveChanges();
+            
+            return RedirectToAction("ActiveRepairs");
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿@model ActiveRepairsVM
+@using static WorkshopManager.Model.DataModels.RepairOrderStatusValue
 
 <h1 style="text-align: center">Aktywne zlecenia</h1>
 
@@ -55,7 +56,14 @@
                         <td>@order.StatusDescription</td>
 
                         <td>
-                            <a href="@Url.Action("ActiveRepairDetails", "ClientRepair", new { id = order.Id })" class="w3-button w3-small w3-blue w3-round">Szczegóły</a>
+                            @if(order.Status == Accepted)
+                            {
+                                <a href="@Url.Action("AcceptedRepairDetails", "ClientRepair", new { id = order.Id })" class="w3-button w3-small w3-blue w3-round">Szczegóły</a>
+                            } 
+                            else if (order.Status == InProgress) 
+                            {
+                                <a href="@Url.Action("ActiveRepairDetails", "ClientRepair", new { id = order.Id })" class="w3-button w3-small w3-blue w3-round">Szczegóły</a>
+                            }
                         </td>
                     </tr>
                 }

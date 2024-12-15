@@ -4,8 +4,6 @@
 <h1 style="text-align: center">Aktywne zlecenia</h1>
 
 <div class="w3-container">
-    @if (Model.AcceptedOrders.Any() || Model.InProgressOrders.Any())
-    {
         <table class="w3-table-all w3-centered w3-hoverable w3-striped w3-card-4" style="width: 100%; table-layout: fixed;">
             <thead>
                 <tr class="w3-light-grey">
@@ -56,26 +54,24 @@
                         <td>@order.StatusDescription</td>
 
                         <td>
-                            @if(order.Status == Accepted)
+                            @if(order.Status == WorkshopManager.Model.DataModels.RepairOrderStatusValue.Accepted)
                             {
                                 <a href="@Url.Action("AcceptedRepairDetails", "ClientRepair", new { id = order.Id })" class="w3-button w3-small w3-blue w3-round">Szczegóły</a>
                             } 
-                            else if (order.Status == InProgress) 
+                            else if (order.Status == WorkshopManager.Model.DataModels.RepairOrderStatusValue.InProgress)
                             {
-                                <a href="@Url.Action("ActiveRepairDetails", "ClientRepair", new { id = order.Id })" class="w3-button w3-small w3-blue w3-round">Szczegóły</a>
+                                <a href="@Url.Action("InProgressRepairDetails", "ClientRepair", new { id = order.Id })" class="w3-button w3-small w3-blue w3-round">Szczegóły</a>
                             }
-                        </td>
+                            else
+                            {
+                                <p>chuj</p>
+                            }
+                    </td>
                     </tr>
                 }
             </tbody>
         </table>
-    }
-    else
-    {
-        <p>Brak aktywnych zleceń.</p>
-    }
 </div>
-
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const toggleButtons = document.querySelectorAll('.toggle-description');

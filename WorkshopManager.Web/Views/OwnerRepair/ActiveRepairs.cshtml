@@ -4,8 +4,7 @@
 	ViewData["Title"] = "ActiveRepairs";
 }
 
-<h1 style="text-align: center">Aktywne naprawy</h1>
-
+<h1 style="text-align: center">Zlecenia w trakcie naprawy</h1>
 <table class="w3-table-all w3-centered w3-hoverable w3-striped w3-card-4" style="width: 100%; table-layout: fixed;">
 	<thead>
 		<tr class="w3-light-grey">
@@ -37,10 +36,26 @@
 					@Html.DisplayFor(modelItem => item.StatusDescription)
 				</td>
 				<td>
-					<a href="@Url.Action("ActiveRepairDetails", "OwnerRepair", new { id = item.Id })" class="w3-button w3-small w3-blue w3-round">Szczegóły</a>
+					<a href="@Url.Action("InProgressRepairDetails", "OwnerRepair", new { id = item.Id })" class="w3-button w3-small w3-blue w3-round">Szczegóły</a>
 				</td>
 			</tr>
 		}
+	</tbody>
+</table>
+
+<h1 style="text-align: center">Zlecenia zaakceptowane</h1>
+<table class="w3-table-all w3-centered w3-hoverable w3-striped w3-card-4" style="width: 100%; table-layout: fixed;">
+	<thead>
+		<tr class="w3-light-grey">
+			<th>Numer rejestracyjny</th>
+			<th>Opis usterki</th>
+			<th>Data zgłoszenia</th>
+			<th>Kwota wyceny</th>
+			<th>Status</th>
+			<th>Akcje</th>
+		</tr>
+	</thead>
+	<tbody>
 		@foreach (var item in Model.AcceptedOrders)
 		{
 			<tr>
@@ -60,7 +75,7 @@
 					@Html.DisplayFor(modelItem => item.StatusDescription)
 				</td>
 				<td>
-					<a href="@Url.Action("ActiveRepairDetails", "OwnerRepair", new { id = item.Id })" class="w3-button w3-small w3-blue w3-round">Szczegóły</a>
+					<a href="@Url.Action("AcceptedRepairDetails", "OwnerRepair", new { id = item.Id })" class="w3-button w3-small w3-blue w3-round">Szczegóły</a>
 				</td>
 			</tr>
 		}

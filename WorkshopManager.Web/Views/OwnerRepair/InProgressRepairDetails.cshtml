@@ -1,4 +1,4 @@
-﻿@model WorkshopManager.ViewModels.VM.ActiveRepairDetailVM
+﻿@model WorkshopManager.ViewModels.VM.InProgressRepairDetailsVM
 
 @{
     ViewData["Title"] = "InProgressRepairDetails";
@@ -48,8 +48,5 @@
         <dt class="col-12 col-sm-10">
             Akcje
         </dt>
-        <dd class="col-12 col-sm-10">
-            @Html.ActionLink("Rozpocznij naprawę", "ActionName", "OwnerRepair", null, new { @class = "btn btn-primary" })
-        </dd>
     </dl>
 </div>

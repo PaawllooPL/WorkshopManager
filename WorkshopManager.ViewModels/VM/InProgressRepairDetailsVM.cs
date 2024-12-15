@@ -27,7 +27,7 @@ namespace WorkshopManager.ViewModels.VM
         public DateTime SubmissionDate { get; set; }
         public string StatusDescription { get; set; } = null!;
         public decimal? EntryEstimatedCost { get; set; }
-        public List<RepairTaskVM>? RepairTasks { get; set; }
+        public IList<RepairTaskVM> RepairTasks { get; set; } = new List<RepairTaskVM>();
     }
 
 }

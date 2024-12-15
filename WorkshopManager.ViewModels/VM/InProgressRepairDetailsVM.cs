@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WorkshopManager.Model.DataModels;
 
 namespace WorkshopManager.ViewModels.VM
 {
     public class InProgressRepairDetailsVM
     {
         public InProgressRepairDetailsVM() { }
-        public InProgressRepairDetailsVM(int id, string registrationNumber, string entryIssueDescription, DateTime submissionDate, string statusDescription, decimal? entryEstimatedCost)
+        public InProgressRepairDetailsVM(int id, string registrationNumber, string entryIssueDescription, DateTime submissionDate, string statusDescription, decimal? entryEstimatedCost, List<RepairTaskVM> repairTasks)
         {
             Id = id;
             RegistrationNumber = registrationNumber;
@@ -17,6 +18,7 @@ namespace WorkshopManager.ViewModels.VM
             SubmissionDate = submissionDate;
             StatusDescription = statusDescription;
             EntryEstimatedCost = entryEstimatedCost;
+            RepairTasks = repairTasks ?? new List<RepairTaskVM>();
         }
 
         public int Id { get; set; }
@@ -25,6 +27,7 @@ namespace WorkshopManager.ViewModels.VM
         public DateTime SubmissionDate { get; set; }
         public string StatusDescription { get; set; } = null!;
         public decimal? EntryEstimatedCost { get; set; }
+        public List<RepairTaskVM>? RepairTasks { get; set; }
     }
 
 }

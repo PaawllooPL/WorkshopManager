@@ -237,6 +237,7 @@ namespace WorkshopManager.Web.Controllers
                     RegistrationNumber = order.RegistrationNumber,
                     EntryIssueDescription = order.EntryIssueDescription,
                     SubmissionDate = order.SubmissionDate,
+                    Status = order.Status,
                     StatusDescription = _statusDescriptionService.GetStatusDescription(order.Status),
                     EntryEstimatedCost = order.EntryEstimatedCost
                 })
@@ -250,6 +251,7 @@ namespace WorkshopManager.Web.Controllers
                     RegistrationNumber = order.RegistrationNumber,
                     EntryIssueDescription = order.EntryIssueDescription,
                     SubmissionDate = order.SubmissionDate,
+                    Status = order.Status,
                     StatusDescription = _statusDescriptionService.GetStatusDescription(order.Status),
                     EntryEstimatedCost = order.EntryEstimatedCost
                 })
@@ -294,6 +296,67 @@ namespace WorkshopManager.Web.Controllers
 
             return View("ActiveRepairDetails", viewModel);
         }
+        [Authorize(Roles = "Client")]
+        public IActionResult AcceptedRepairDetails(int id)
+        {
+            var clientId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (clientId == null)
+            {
+                return Unauthorized();
+            }
+
+            var order = _dbContext.RepairOrders
+                .Where(o => o.ClientId == int.Parse(clientId) && o.Id == id)
+                .FirstOrDefault();
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new AcceptedRepairDetailsVM
+            {
+                Id = order.Id,
+                RegistrationNumber = order.RegistrationNumber,
+                EntryIssueDescription = order.EntryIssueDescription,
+                SubmissionDate = order.SubmissionDate,
+                StatusDescription = _statusDescriptionService.GetStatusDescription(order.Status),
+                EntryEstimatedCost = order.EntryEstimatedCost
+            };
+
+            return View("AcceptedRepairDetails", viewModel);
+        }
+        [Authorize(Roles = "Client")]
+        public IActionResult InProgressRepairDetails(int id)
+        {
+            var clientId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (clientId == null)
+            {
+                return Unauthorized();
+            }
+
+            var order = _dbContext.RepairOrders
+                .Where(o => o.ClientId == int.Parse(clientId) && o.Id == id)
+                .FirstOrDefault();
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new InProgressRepairDetailsVM
+            {
+                Id = order.Id,
+                RegistrationNumber = order.RegistrationNumber,
+                EntryIssueDescription = order.EntryIssueDescription,
+                SubmissionDate = order.SubmissionDate,
+                StatusDescription = _statusDescriptionService.GetStatusDescription(order.Status),
+                EntryEstimatedCost = order.EntryEstimatedCost
+            };
+
+            return View("InProgressRepairDetails", viewModel);
+        }
+
 
     }
 }

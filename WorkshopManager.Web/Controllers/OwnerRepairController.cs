@@ -1,14 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
-using System.Diagnostics;
 using System.Security.Claims;
 using WorkshopManager.DAL.EF;
 using WorkshopManager.Model.DataModels;
 using WorkshopManager.Services;
 using WorkshopManager.ViewModels.VM;
-using static NuGet.Packaging.PackagingConstants;
 
 namespace WorkshopManager.Web.Controllers
 {
@@ -172,7 +168,7 @@ namespace WorkshopManager.Web.Controllers
             return View(viewModel);
         }
 
-        public IActionResult ActiveRepairDetails(int id)
+        public IActionResult AcceptedRepairDetails(int id)
         {
             var ownerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (ownerId == null)
@@ -188,7 +184,7 @@ namespace WorkshopManager.Web.Controllers
                 return NotFound();
             }
             
-            var viewModel = new ActiveRepairDetailVM
+            var viewModel = new AcceptedRepairDetailsVM
             {
                 Id = order.Id,
                 RegistrationNumber = order.RegistrationNumber,
@@ -198,7 +194,36 @@ namespace WorkshopManager.Web.Controllers
                 EntryEstimatedCost = order.EntryEstimatedCost
             };
 
-            return View("ActiveRepairDetails", viewModel);
+            return View("AcceptedRepairDetails", viewModel);
+        }
+        
+        public IActionResult InProgressRepairDetails(int id)
+        {
+            var ownerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (ownerId == null)
+            {
+                return Unauthorized();
+            }
+
+            var order = _dbContext.RepairOrders
+               .FirstOrDefault(o => o.Id == id);
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+            
+            var viewModel = new InProgressRepairDetailsVM
+            {
+                Id = order.Id,
+                RegistrationNumber = order.RegistrationNumber,
+                EntryIssueDescription = order.EntryIssueDescription,
+                SubmissionDate = order.SubmissionDate,
+                StatusDescription = _statusDescriptionService.GetStatusDescription(order.Status),
+                EntryEstimatedCost = order.EntryEstimatedCost
+            };
+
+            return View("InProgressRepairDetails", viewModel);
         }
         public IActionResult StartRepair(int id)
         {

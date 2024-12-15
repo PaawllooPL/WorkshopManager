@@ -1,4 +1,4 @@
-﻿@model WorkshopManager.ViewModels.VM.ActiveRepairDetailVM
+﻿@model WorkshopManager.ViewModels.VM.AcceptedRepairDetailsVM
 
 @{
     ViewData["Title"] = "AcceptedRepairDetails";
@@ -49,7 +49,9 @@
             Akcje
         </dt>
         <dd class="col-12 col-sm-10">
-            @Html.ActionLink("Rozpocznij naprawę", "StartRepair", "OwnerRepair", null, new { @class = "btn btn-primary" })
+            <div style="display: flex; flex-direction: column">
+                <a href="@Url.Action("StartRepair", "OwnerRepair", new{id = Model.Id})" class="w3-button w3-small w3-blue w3-round col-10 col-md-4 col-lg-2">Rozpocznij naprawę</a>
+            </div>
         </dd>
     </dl>
 </div>

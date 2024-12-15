@@ -4,53 +4,86 @@
     ViewData["Title"] = "Szczegóły zlecenia";
 }
 
-<h1>Szczegóły zlecenia</h1>
+<div class="container mt-4">
+    <h1 class="mb-4">Szczegóły zlecenia</h1>
 
-<div>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            Id
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Id)
-        </dd>
-        <dt class="col-sm-2">
-            Numer rejestracyjny
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.RegistrationNumber)
-        </dd>
-        <dt class="col-sm-2">
-            Opis usterki
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.EntryIssueDescription)
-        </dd>
-        <dt class="col-sm-2">
-            Data zgłoszenia
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.SubmissionDate)
-        </dd>
-        <dt class="col-sm-2">
-            Status
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.StatusDescription)
-        </dd>
-        <dt class="col-sm-2">
-            Szacunkowy koszt
-        </dt>
-        <dd class="col-sm-10">
-            @if (Model.EntryEstimatedCost.HasValue)
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-light font-weight-bold">Informacje o zleceniu</div>
+        <div class="card-body">
+            <dl class="row">
+                <div class="col-12 mb-2">
+                    <strong>Id:</strong> @Html.DisplayFor(model => model.Id)
+                </div>
+                <div class="col-12 mb-2">
+                    <strong>Numer rejestracyjny:</strong> @Html.DisplayFor(model => model.RegistrationNumber)
+                </div>
+                <div class="col-12 mb-2">
+                    <strong>Opis usterki:</strong> @Html.DisplayFor(model => model.EntryIssueDescription)
+                </div>
+                <div class="col-12 mb-2">
+                    <strong>Data zgłoszenia:</strong> @Html.DisplayFor(model => model.SubmissionDate)
+                </div>
+                <div class="col-12 mb-2">
+                    <strong>Status:</strong> @Html.DisplayFor(model => model.StatusDescription)
+                </div>
+                <div class="col-12 mb-2">
+                    <strong>Szacunkowy koszt:</strong>
+                    @if (Model.EntryEstimatedCost.HasValue)
+                    {
+                        @Model.EntryEstimatedCost.Value.ToString("C")
+                    }
+                    else
+                    {
+                        <span class="text-muted">Niewycenione</span>
+                    }
+                </div>
+            </dl>
+        </div>
+    </div>
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-light font-weight-bold">Zadania naprawcze</div>
+        <div class="card-body">
+            @if (Model.RepairTasks.Any())
             {
-                @Model.EntryEstimatedCost.Value.ToString("C")
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Szacowany koszt</th>
+                            <th>Opis</th>
+                            <th>Status</th>
+                            <th>Akcje</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var task in Model.RepairTasks)
+                        {
+                            <tr>
+                                <td>@task.Cost.ToString("C")</td>
+
+                                <td>@task.Description</td>
+                                <td>
+                                    @if (task.AcceptedByCustomer ?? false)
+                                    {
+                                        <span>Zaakceptowane</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Niezaakceptowane</span>
+                                    }
+                                </td>
+
+                                <td>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             }
             else
             {
-                <span>Niewycenione</span>
+                <p class="text-muted">Brak zadań naprawczych powiązanych z tym zleceniem.</p>
             }
-        </dd>
-    </dl>
+        </div>
+    </div>
 </div>

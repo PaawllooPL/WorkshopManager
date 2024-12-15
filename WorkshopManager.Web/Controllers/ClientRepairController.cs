@@ -326,6 +326,7 @@ namespace WorkshopManager.Web.Controllers
 
             return View("AcceptedRepairDetails", viewModel);
         }
+
         [Authorize(Roles = "Client")]
         public IActionResult InProgressRepairDetails(int id)
         {
@@ -344,6 +345,17 @@ namespace WorkshopManager.Web.Controllers
                 return NotFound();
             }
 
+            var repairTasks = _dbContext.RepairTasks
+                .Where(rt => rt.RepairOrderId == id)
+                .Select(rt => new RepairTaskVM
+                {
+                    Id = rt.Id,
+                    Description = rt.Description,
+                    Cost = rt.Cost,
+                    AcceptedByCustomer = rt.AcceptedByCustomer
+                })
+                .ToList();
+
             var viewModel = new InProgressRepairDetailsVM
             {
                 Id = order.Id,
@@ -351,7 +363,8 @@ namespace WorkshopManager.Web.Controllers
                 EntryIssueDescription = order.EntryIssueDescription,
                 SubmissionDate = order.SubmissionDate,
                 StatusDescription = _statusDescriptionService.GetStatusDescription(order.Status),
-                EntryEstimatedCost = order.EntryEstimatedCost
+                EntryEstimatedCost = order.EntryEstimatedCost,
+                RepairTasks = repairTasks
             };
 
             return View("InProgressRepairDetails", viewModel);

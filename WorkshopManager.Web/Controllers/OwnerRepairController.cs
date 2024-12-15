@@ -196,7 +196,7 @@ namespace WorkshopManager.Web.Controllers
 
             return View("AcceptedRepairDetails", viewModel);
         }
-        
+
         public IActionResult InProgressRepairDetails(int id)
         {
             var ownerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -212,7 +212,17 @@ namespace WorkshopManager.Web.Controllers
             {
                 return NotFound();
             }
-            
+
+            var repairTasks = _dbContext.RepairTasks
+                .Where(rt => rt.RepairOrderId == id)
+                .Select(rt => new RepairTaskVM
+                {
+                    Cost = rt.Cost,
+                    Description = rt.Description ?? string.Empty,
+                    AcceptedByCustomer = rt.AcceptedByCustomer
+                })
+                .ToList();
+
             var viewModel = new InProgressRepairDetailsVM
             {
                 Id = order.Id,
@@ -220,7 +230,8 @@ namespace WorkshopManager.Web.Controllers
                 EntryIssueDescription = order.EntryIssueDescription,
                 SubmissionDate = order.SubmissionDate,
                 StatusDescription = _statusDescriptionService.GetStatusDescription(order.Status),
-                EntryEstimatedCost = order.EntryEstimatedCost
+                EntryEstimatedCost = order.EntryEstimatedCost,
+                RepairTasks = repairTasks
             };
 
             return View("InProgressRepairDetails", viewModel);

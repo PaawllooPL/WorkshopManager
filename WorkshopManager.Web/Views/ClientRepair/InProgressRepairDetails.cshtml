@@ -62,10 +62,27 @@
                         }
                         else
                         {
-                            <span>Nieokreślone</span>
+                            <span>Oczekujace</span>
                         }
                     </td>
-                    <td></td>
+                    
+                    @if(@task.AcceptedByCustomer == null) 
+                    {
+                        <td>
+                            <div class="d-flex">
+                                <form asp-controller="RepairTask" asp-action="AcceptTask" asp-route-id="@task.Id" method="post" style="margin-right: 5px;">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="w3-button w3-green w3-round">Akceptuj</button>
+                                </form>
+
+                                <form asp-controller="RepairTask" asp-action="RejectTask" asp-route-id="@task.Id" method="post">
+                                        @Html.AntiForgeryToken()
+                                    <button type="submit" class="w3-button w3-red w3-round">Odrzuć</button>
+                                </form>
+                            </div>
+                        </td>
+
+                    }
                 </tr>
             }
         </tbody>

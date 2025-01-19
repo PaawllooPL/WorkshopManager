@@ -35,16 +35,20 @@
                 <span>Niewycenione</span>
             }
         </dd>
+        <dt class="col-sm-2">Obecny koszt</dt>
+        <dd class="col-sm-10">
+            <span>@(Model.RepairTasks.Aggregate(0m, (cost, rt) => rt.IsCompleted ? cost + rt.Cost : cost) + " zł")</span>
+         </dd>
     </dl>
 
     <h3>Czynności Naprawcze</h3>
     <table class="table">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Opis</th>
+                <th>Id</th>
+                <th class="w-50">Opis</th>
                 <th>Szacowany koszt</th>
-                <th>Akceptacja przez klienta</th>
+                <th>Status</th>
                 <th>Akcje</th>
             </tr>
         </thead>
@@ -53,16 +57,33 @@
             {
                 <tr>
                     <td>@task.Id</td>
-                    <td>@task.Description</td>
+                    <td>
+                        <div class="description-container">
+                            @if (task.Description.Length > 100)
+                            {
+                                    <span class="short-description">
+                                        @(task.Description.Substring(0, 100) + "...")
+                                    </span>
+                                    <span class="full-description" style="display:none;">
+                                        @task.Description
+                                    </span>
+                                    <button class="toggle-description w3-button w3-small w3-blue w3-round" type="button">Rozwiń</button>
+                            }
+                            else
+                            {
+                                    <span>@task.Description</span>
+                            }
+                        </div>
+                    </td>
                     <td>@task.Cost.ToString("C")</td>
                     <td>
                         @if (task.AcceptedByCustomer.HasValue)
                         {
-                            @((task.AcceptedByCustomer.Value) ? "Akceptowane" : "Odrzucone")
+                            @((task.AcceptedByCustomer.Value) ? task.IsCompleted ? "Zakończone" : "Zaakceptowane" : "Odrzucone")
                         }
                         else
                         {
-                            <span>Oczekujace</span>
+                            <span>Oczekujące</span>
                         }
                     </td>
                     
@@ -88,3 +109,43 @@
         </tbody>
     </table>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const toggleButtons = document.querySelectorAll('.toggle-description');
+
+        toggleButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const descriptionContainer = button.closest('.description-container');
+                const shortDescription = descriptionContainer.querySelector('.short-description');
+                const fullDescription = descriptionContainer.querySelector('.full-description');
+
+                if (fullDescription.style.display === 'none') {
+                    fullDescription.style.display = 'inline';
+                    shortDescription.style.display = 'none';
+                    button.textContent = 'Zwiń';
+                } else {
+                    fullDescription.style.display = 'none';
+                    shortDescription.style.display = 'inline';
+                    button.textContent = 'Rozwiń';
+                }
+            });
+        });
+    });
+</script>
+
+<style>
+    .description-container {
+        max-width: 100%;
+    }
+    .short-description {
+        display: inline-block;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .full-description {
+        display: none;
+    }
+</style>

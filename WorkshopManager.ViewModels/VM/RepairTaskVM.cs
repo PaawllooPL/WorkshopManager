@@ -9,8 +9,9 @@ namespace WorkshopManager.ViewModels.VM
     public class RepairTaskVM
     {
         public int Id { get; set; }
-        public string? Description { get; set; }
+        public string Description { get; set; } = string.Empty;
         public decimal Cost { get; set; }
         public bool? AcceptedByCustomer { get; set; }
+        public bool IsCompleted { get; set; } = false;
     }
 }

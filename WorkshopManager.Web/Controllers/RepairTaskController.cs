@@ -78,12 +78,42 @@ namespace WorkshopManager.Web.Controllers
             {
                 Description = vm.Description,
                 Cost = vm.Cost,
-                AcceptedByCustomer = null
+                AcceptedByCustomer = null,
+                IsCompleted = false,
             };
             order.Tasks.Add(repairTask);
             _dbContext.SaveChanges();
 
 			return RedirectToAction("InProgressRepairDetails", "OwnerRepair", new { id = vm.RepairId });
+        }
+
+        [HttpPost]
+        public IActionResult Complete(int id)
+        {
+            var ownerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (ownerId == null)
+            {
+                return Unauthorized();
+            }
+
+            var task = _dbContext.RepairTasks
+                .Include(rt => rt.RepairOrder)
+                .FirstOrDefault(rt => rt.Id == id);
+            if (task == null)
+            {
+                return NotFound();
+            }
+            if(task.RepairOrder.Status != RepairOrderStatusValue.InProgress)
+            {
+                return BadRequest();
+            }
+
+            task.IsCompleted = true;
+
+            _dbContext.Update(task);
+            _dbContext.SaveChanges();
+
+            return RedirectToAction("InProgressRepairDetails", "OwnerRepair", new {id = task.RepairOrderId});
         }
     }
 }

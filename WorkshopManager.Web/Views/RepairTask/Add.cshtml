@@ -5,8 +5,8 @@
 
 <h1 style="text-align: center">Dodawanie czynności naprawczej</h1>
 
-<div class="d-flex justify-content-center align-items-center vh-100">
-	<form method="post" asp-controller="RepairTask" asp-action="Add">
+<div class="d-flex justify-content-center align-items-center vw-50">
+	<form method="post" asp-controller="RepairTask" asp-action="Add" class="w-50">
 		<input type="hidden" name="RepairId" value="@Model" />
 		<div class="mb-3">
 			<label for="Description" class="form-label">Opis</label>
@@ -14,9 +14,10 @@
 		</div>
 		<div class="mb-3">
 			<label for="Koszt" class="form-label">Koszt</label>
-			<input type="number" class="form-control" id="Koszt" name="Cost" step="0.01" min="0" required />
+			<input type="number" class="form-control w-25" id="Koszt" name="Cost" step="0.01" min="0" required />
 		</div>
 		<button type="submit" class="w3-button w3-small w3-blue w3-round">Dodaj</button>
 	</form>
 </div>
+
 

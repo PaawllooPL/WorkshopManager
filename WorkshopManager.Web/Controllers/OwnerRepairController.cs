@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using WorkshopManager.DAL.EF;
 using WorkshopManager.Model.DataModels;
@@ -183,7 +184,7 @@ namespace WorkshopManager.Web.Controllers
             {
                 return NotFound();
             }
-            
+
             var viewModel = new AcceptedRepairDetailsVM
             {
                 Id = order.Id,
@@ -217,9 +218,11 @@ namespace WorkshopManager.Web.Controllers
                 .Where(rt => rt.RepairOrderId == id)
                 .Select(rt => new RepairTaskVM
                 {
+                    Id = rt.Id,
                     Cost = rt.Cost,
                     Description = rt.Description ?? string.Empty,
-                    AcceptedByCustomer = rt.AcceptedByCustomer
+                    AcceptedByCustomer = rt.AcceptedByCustomer,
+                    IsCompleted = rt.IsCompleted,
                 })
                 .ToList();
 
@@ -256,13 +259,67 @@ namespace WorkshopManager.Web.Controllers
             var mechanic = _dbContext.Mechanics.FirstOrDefault(m => m.Id == formData.MechanicId);
             if (mechanic == null)
                 return NotFound();
-            
+
             repair.Mechanic = mechanic;
             repair.Status = RepairOrderStatusValue.InProgress;
+            repair.StartDate = DateTime.Now;
 
             _dbContext.SaveChanges();
-            
+
             return RedirectToAction("ActiveRepairs");
+        }
+        [HttpPost]
+        public IActionResult CompleteRepair(int id)
+        {
+            var ownerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (ownerId == null)
+            {
+                return Unauthorized();
+            }
+
+            var order = _dbContext.RepairOrders
+               .FirstOrDefault(o => o.Id == id);
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+            if (order.Status != RepairOrderStatusValue.InProgress)
+            {
+                return BadRequest();
+            }
+            order.Status = RepairOrderStatusValue.Completed;
+            order.EndDate = DateTime.Now;
+            
+            _dbContext.Update(order);
+            _dbContext.SaveChanges();
+
+            return RedirectToAction("InProgressRepairDetails", "OwnerRepair", new { id });
+        }
+
+        public IActionResult CompletedRepairs()
+        {
+            var ownerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (ownerId == null)
+            {
+                return Unauthorized();
+            }
+
+            var orders = _dbContext.RepairOrders
+               .Include(ro => ro.Tasks)
+               .Where(ro => ro.Status == RepairOrderStatusValue.Completed).ToList();
+
+            var viewModel = orders.Select(o => new CompletedRepairVM
+            {
+                Id = o.Id,
+                RegistrationNumber = o.RegistrationNumber,
+                StartDate = (DateTime)o.StartDate!,
+                EndDate = (DateTime)o.EndDate!,
+                EntryEstimatedCost = (decimal)o.EntryEstimatedCost!,
+                FinalCost = o.Tasks.Aggregate(0m, (finalCost, rt) => rt.IsCompleted ? (finalCost + rt.Cost) : finalCost),
+            }).ToList();
+
+            return View("CompletedRepairs", viewModel);
         }
     }
 }

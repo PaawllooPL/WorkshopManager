@@ -45,12 +45,22 @@
         <dd class="col-12 col-sm-10">
             @Html.DisplayFor(model => model.EntryEstimatedCost)
         </dd>
+        
+        <dt class="col-12 col-sm-2">Obecny koszt</dt>
+        <dd class="col-12 col-sm-10">
+            <span>@(Model.RepairTasks.Aggregate(0m, (cost, rt) => rt.IsCompleted ? cost + rt.Cost : cost).ToString() + " zł")</span>
+        </dd>
+        
         <dt class="col-12 col-sm-10">
             Akcje
         </dt>
         <dd class="col-12 col-sm-10">
-            <div style="display: flex; flex-direction: row">
-                <a href="@Url.Action("Add", "RepairTask", new{id = Model.Id})" class="w3-button w3-small w3-blue w3-round col-10 col-md-4 col-lg-2">Dodaj czynność naprawczą</a>
+            <div style="display: flex; flex-direction: column">
+                <a href="@Url.Action("Add", "RepairTask", new{id = Model.Id})" class="w3-button w3-small w3-blue w3-round col-10 col-md-4 col-lg-3 my-2">Dodaj czynność naprawczą</a>
+                <form method="post" asp-controller="OwnerRepair" asp-action="CompleteRepair">
+                    <input type="hidden" value="@Model.Id" name="id"/>
+                    <button type="submit" class="w3-button w3-small w3-green w3-round col-10 col-md-4 col-lg-3 my-2">Zakończ naprawę</button>
+                </form>
             </div>
         </dd>
     </dl>
@@ -64,6 +74,7 @@
             <th>Szacowany koszt</th>
             <th>Opis</th>
             <th>Status</th>
+            <th>Akcje</th>
         </tr>
     </thead>
     <tbody>
@@ -71,26 +82,99 @@
         {
             <tr>
                 <td>@Html.DisplayFor(modelItem => task.Cost)</td>
-                <td>@Html.DisplayFor(modelItem => task.Description)</td>
+                <td>
+                    @* @Html.DisplayFor(modelItem => task.Description) *@
+                    <div class="description-container">
+                        @if (task.Description.Length > 100)
+                        {
+                            <span class="short-description">
+                                @(task.Description.Substring(0, 100) + "...")
+                            </span>
+                            <span class="full-description" style="display:none;">
+                                @task.Description
+                            </span>
+                            <button class="toggle-description w3-button w3-small w3-blue w3-round" type="button">Rozwiń</button>
+                        }
+                        else
+                        {
+                            <span>@task.Description</span>
+                        }
+                    </div>
+                </td>
                 <td>
                     @if (task.AcceptedByCustomer.HasValue)
                     {
                         if (task.AcceptedByCustomer.Value)
                         {
-                            <span>Zaakceptowane</span>
+                            if(task.IsCompleted)
+                            {
+                                <span>Zakończone</span>
+                            }
+                            else
+                            {
+                                <span>Zaakceptowane</span>
+                            }
                         }
                         else
                         {
-                            <span>Niezaakceptowane</span>
+                            <span>Odrzucone</span>
                         }
                     }
                     else
                     {
-                        <span>Nieznane</span>
+                        <span>Oczekujące</span>
+                    }
+                </td>
+                <td>
+                    @if(task.AcceptedByCustomer == true && !task.IsCompleted)
+                    {
+                        <form method="post" asp-controller="RepairTask" asp-action="Complete">
+                            <input type="hidden" name="id" value="@task.Id"/>
+                            <button type="submit" class="w3-button w3-small w3-blue w3-round col-10 col-md-4 col-lg-3">Zakończ</button>
+                        </form>
                     }
                 </td>
             </tr>
         }
     </tbody>
 </table>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const toggleButtons = document.querySelectorAll('.toggle-description');
 
+        toggleButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const descriptionContainer = button.closest('.description-container');
+                const shortDescription = descriptionContainer.querySelector('.short-description');
+                const fullDescription = descriptionContainer.querySelector('.full-description');
+
+                if (fullDescription.style.display === 'none') {
+                    fullDescription.style.display = 'inline';
+                    shortDescription.style.display = 'none';
+                    button.textContent = 'Zwiń';
+                } else {
+                    fullDescription.style.display = 'none';
+                    shortDescription.style.display = 'inline';
+                    button.textContent = 'Rozwiń';
+                }
+            });
+        });
+    });
+</script>
+
+<style>
+    .description-container {
+        max-width: 100%;
+    }
+
+    .short-description {
+        display: inline-block;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .full-description {
+        display: none;
+    }
+</style>

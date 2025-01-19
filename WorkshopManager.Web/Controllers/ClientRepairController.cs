@@ -350,9 +350,10 @@ namespace WorkshopManager.Web.Controllers
                 .Select(rt => new RepairTaskVM
                 {
                     Id = rt.Id,
-                    Description = rt.Description,
+                    Description = rt.Description ?? "",
                     Cost = rt.Cost,
-                    AcceptedByCustomer = rt.AcceptedByCustomer
+                    AcceptedByCustomer = rt.AcceptedByCustomer,
+                    IsCompleted = rt.IsCompleted,
                 })
                 .ToList();
 
@@ -370,6 +371,32 @@ namespace WorkshopManager.Web.Controllers
             return View("InProgressRepairDetails", viewModel);
         }
 
+		public IActionResult CompletedRepairs()
+		{
+			var clientId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			if (clientId == null)
+			{
+				return Unauthorized();
+			}
 
-    }
+			var orders = _dbContext.RepairOrders
+			   .Include(ro => ro.Tasks)
+			   .Where(ro => ro.Status == RepairOrderStatusValue.Completed &&
+                            ro.Client.Id == int.Parse(clientId))
+               .ToList();
+
+			var viewModel = orders.Select(o => new CompletedRepairVM
+			{
+				Id = o.Id,
+				RegistrationNumber = o.RegistrationNumber,
+				StartDate = (DateTime)o.StartDate!,
+				EndDate = (DateTime)o.EndDate!,
+				EntryEstimatedCost = (decimal)o.EntryEstimatedCost!,
+				FinalCost = o.Tasks.Aggregate(0m, (finalCost, rt) => rt.IsCompleted ? (finalCost + rt.Cost) : finalCost),
+			}).ToList();
+
+			return View("CompletedRepairs", viewModel);
+		}
+
+	}
 }

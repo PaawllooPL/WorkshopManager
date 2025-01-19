@@ -14,7 +14,8 @@ namespace WorkshopManager.Model.DataModels
         public string? Description { get; set; }
         public decimal Cost { get; set; }
         public bool? AcceptedByCustomer { get; set; }
-    
+        public bool IsCompleted { get; set; } = false;
+
         public RepairTask() { }
     }
 }

@@ -5,40 +5,44 @@
 }
 
 <h1 style="text-align: center">Zakończone zlecenia</h1>
-<table class="w3-table-all w3-centered w3-hoverable w3-striped w3-card-4" style="width: 100%; table-layout: fixed;">
-	<thead>
-		<tr class="w3-light-grey">
-			<th>Id</th>
-			<th>Numer rejestracyjny</th>
-			<th>Data rozpoczęcia naprawy</th>
-			<th>Data zakończenia naprawy</th>
-			<th>Szacunkowy koszt</th>
-			<th>Finalny koszt</th>
-		</tr>
-	</thead>
-	<tbody>
-		@foreach (var item in Model)
-		{
-			<tr>
-				<td>
-					@Html.DisplayFor(modelItem => item.Id)
-				</td>
-				<td>
-					@Html.DisplayFor(modelItem => item.RegistrationNumber)
-				</td>
-				<td>
-					@Html.DisplayFor(modelItem => item.StartDate)
-				</td>
-				<td>
-					@Html.DisplayFor(modelItem => item.EndDate)
-				</td>
-				<td>
-					@Html.DisplayFor(modelItem => item.EntryEstimatedCost)
-				</td>
-				<td>
-					@Html.DisplayFor(modelItem => item.FinalCost)
-				</td>
+
+<div style="overflow-x: auto;">
+
+	<table class="w3-table-all w3-centered w3-hoverable w3-striped w3-card-4" style="width: 100%; table-layout: auto;">
+		<thead>
+			<tr class="w3-light-grey">
+				<th>Id</th>
+				<th>Numer rejestracyjny</th>
+				<th>Data rozpoczęcia naprawy</th>
+				<th>Data zakończenia naprawy</th>
+				<th>Szacunkowy koszt</th>
+				<th>Finalny koszt</th>
 			</tr>
-		}
-	</tbody>
+		</thead>
+		<tbody>
+			@foreach (var item in Model)
+			{
+				<tr>
+					<td>
+						@Html.DisplayFor(modelItem => item.Id)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => item.RegistrationNumber)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => item.StartDate)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => item.EndDate)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => item.EntryEstimatedCost)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => item.FinalCost)
+					</td>
+				</tr>
+			}
+		</tbody>
 </table>
+</div>

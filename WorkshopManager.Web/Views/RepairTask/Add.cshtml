@@ -1,23 +1,22 @@
 ﻿@model int
 @{
-	ViewData["Title"] = "Dodawanie czynności naprawczej";
+    ViewData["Title"] = "Dodawanie czynności naprawczej";
 }
 
 <h1 style="text-align: center">Dodawanie czynności naprawczej</h1>
 
-<div class="d-flex justify-content-center align-items-center vw-50">
-	<form method="post" asp-controller="RepairTask" asp-action="Add" class="w-50">
-		<input type="hidden" name="RepairId" value="@Model" />
-		<div class="mb-3">
-			<label for="Description" class="form-label">Opis</label>
-			<textarea class="form-control" id="Description" name="Description" rows="3" required></textarea>
-		</div>
-		<div class="mb-3">
-			<label for="Koszt" class="form-label">Koszt</label>
-			<input type="number" class="form-control w-25" id="Koszt" name="Cost" step="0.01" min="0" required />
-		</div>
-		<button type="submit" class="w3-button w3-small w3-blue w3-round">Dodaj</button>
-	</form>
+<div class="d-flex justify-content-center align-items-center">
+    <form method="post" asp-controller="RepairTask" asp-action="Add" class="w-100 w-sm-75 w-md-50">
+        <input type="hidden" name="RepairId" value="@Model" />
+        <div class="mb-3">
+            <label for="Description" class="form-label">Opis</label>
+            <textarea class="form-control" id="Description" name="Description" rows="3" required></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="Koszt" class="form-label">Koszt</label>
+            <input type="number" class="form-control w-100 w-sm-50" id="Koszt" name="Cost" step="0.01" min="0" required />
+        </div>
+        <button type="submit" class="w3-button w3-small w3-blue w3-round w-20">Dodaj</button>
+    </form>
 </div>
-
 

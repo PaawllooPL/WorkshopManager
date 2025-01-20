@@ -1,106 +1,113 @@
 ﻿@model WorkshopManager.ViewModels.VM.PendingEstimatesVM
 
-<h2 style="text-align: center">Przesłane zlecenia oczekujące na wycenę lub akceptację</h2>
+<h2 class="text-center mb-4">Przesłane zlecenia oczekujące na wycenę lub akceptację</h2>
 
-<div class="w3-container">
-    <table class="w3-table-all w3-centered w3-hoverable w3-striped w3-card-4" style="width: 100%; table-layout: fixed;">
-        <thead>
-            <tr class="w3-light-grey">
-                <th>Numer rejestracyjny</th>
-                <th>Opis usterki</th>
-                <th>Data zgłoszenia</th>
-                <th>Status</th>
-                <th>Kwota wyceny</th>
-                <th>Akcje</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var order in Model.ClientApprovals)
-            {
+<div class="container">
+    <div class="table-responsive">
+        <table class="table table-hover table-striped table-bordered text-center">
+            <thead class="table-light">
                 <tr>
-                    <td>@order.RegistrationNumber</td>
-                    <td>
-                        <div class="description-container">
-                            @if (order.EntryIssueDescription.Length > 100)
+                    <th>Numer rejestracyjny</th>
+                    <th>Opis usterki</th>
+                    <th>Data zgłoszenia</th>
+                    <th>Status</th>
+                    <th>Kwota wyceny</th>
+                    <th>Akcje</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model.ClientApprovals)
+                {
+                    <tr>
+                        <td>@order.RegistrationNumber</td>
+                        <td>
+                            <div class="description-container">
+                                @if (order.EntryIssueDescription.Length > 100)
+                                {
+                                    <span class="short-description">
+                                        @(order.EntryIssueDescription.Substring(0, 100) + "...")
+                                    </span>
+                                    <span class="full-description d-none">
+                                        @order.EntryIssueDescription
+                                    </span>
+                                    <button class="toggle-description btn btn-sm btn-primary mt-2">Rozwiń</button>
+                                }
+                                else
+                                {
+                                    <span>@order.EntryIssueDescription</span>
+                                }
+                            </div>
+                        </td>
+                        <td>@order.SubmissionDate.ToString("dd/MM/yyyy")</td>
+                        <td>@order.StatusDescription</td>
+                        <td>
+                            @if (order.EntryEstimatedCost.HasValue)
                             {
-                                <span class="short-description">
-                                    @(order.EntryIssueDescription.Substring(0, 100) + "...")
-                                </span>
-                                <span class="full-description" style="display:none;">
-                                    @order.EntryIssueDescription
-                                </span>
-                                <button class="toggle-description w3-button w3-small w3-blue w3-round" type="button">Rozwiń</button>
+                                @order.EntryEstimatedCost.Value.ToString("C")
                             }
                             else
                             {
-                                <span>@order.EntryIssueDescription</span>
+                                <span>Niewycenione</span>
                             }
-                        </div>
-                    </td>
-                    <td>@order.SubmissionDate.ToString("dd/MM/yyyy")</td>
-                    <td>@order.StatusDescription</td>
-                    <td>
-                        @if (order.EntryEstimatedCost.HasValue)
-                        {
-                            @order.EntryEstimatedCost.Value.ToString("C")
-                        }
-                        else
-                        {
-                            <span>Niewycenione</span>
-                        }
-                    </td>
-                    <td>
-                        <form asp-action="RespondToEstimate" asp-route-id="@order.Id" method="post" style="display: inline;">
-                            <input type="hidden" name="response" value="accept" />
-                            <button type="submit" class="w3-button w3-green w3-round">Akceptuj</button>
-                        </form>
+                        </td>
+                        <td>
+                            <form asp-action="RespondToEstimate" asp-route-id="@order.Id" method="post" style="display: inline;">
+                                <input type="hidden" name="response" value="accept" />
+                                <button type="submit" class="btn btn-sm btn-success">Akceptuj</button>
+                            </form>
 
-                        <form asp-action="RespondToEstimate" asp-route-id="@order.Id" method="post" style="display: inline; margin-top: 5px;">
-                            <input type="hidden" name="response" value="reject" />
-                            <button type="submit" class="w3-button w3-red w3-round">Odrzuć</button>
-                        </form>
-                    </td>
-                </tr>
-            }
-            @foreach (var order in Model.PendingEstimates)
-            {
-                <tr>
-                    <td>@order.RegistrationNumber</td>
-                    <td>
-                        <div class="description-container">
-                            @if (order.EntryIssueDescription.Length > 100)
+                            <form asp-action="RespondToEstimate" asp-route-id="@order.Id" method="post" style="display: inline; margin-top: 5px;">
+                                <input type="hidden" name="response" value="reject" />
+                                <button type="submit" class="btn btn-sm btn-danger">Odrzuć</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+
+                @foreach (var order in Model.PendingEstimates)
+                {
+                    <tr>
+                        <td>@order.RegistrationNumber</td>
+                        <td>
+                            <div class="description-container">
+                                @if (order.EntryIssueDescription.Length > 100)
+                                {
+                                    <span class="short-description">
+                                        @(order.EntryIssueDescription.Substring(0, 100) + "...")
+                                    </span>
+                                    <span class="full-description d-none">
+                                        @order.EntryIssueDescription
+                                    </span>
+                                    <button class="toggle-description btn btn-sm btn-primary mt-2">Rozwiń</button>
+                                }
+                                else
+                                {
+                                    <span>@order.EntryIssueDescription</span>
+                                }
+                            </div>
+                        </td>
+                        <td>@order.SubmissionDate.ToString("dd/MM/yyyy")</td>
+                        <td>@order.StatusDescription</td>
+                        <td>
+                            @if (order.EntryEstimatedCost.HasValue)
                             {
-                                <span class="short-description">
-                                    @(order.EntryIssueDescription.Substring(0, 100) + "...")
-                                </span>
-                                <span class="full-description" style="display:none;">
-                                    @order.EntryIssueDescription
-                                </span>
-                                <button class="toggle-description w3-button w3-small w3-blue w3-round" type="button">Rozwiń</button>
+                                @order.EntryEstimatedCost.Value.ToString("C")
                             }
                             else
                             {
-                                <span>@order.EntryIssueDescription</span>
+                                <span>Niewycenione</span>
                             }
-                        </div>
-                    </td>
-                    <td>@order.SubmissionDate.ToString("dd/MM/yyyy")</td>
-                    <td>@order.StatusDescription</td>
-                    <td>
-                        @if (order.EntryEstimatedCost.HasValue)
-                        {
-                            @order.EntryEstimatedCost.Value.ToString("C")
-                        }
-                        else
-                        {
-                            <span>Niewycenione</span>
-                        }
-                    </td>
-                    <td>Niedostępne</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                        </td>
+                        <td>Niedostępne</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="@Url.Action("Index", "Home")" class="w3-button w3-small w3-blue w3-round">Powrót</a>
+    </div>
 </div>
 
 <script>
@@ -113,13 +120,13 @@
                 const shortDescription = descriptionContainer.querySelector('.short-description');
                 const fullDescription = descriptionContainer.querySelector('.full-description');
 
-                if (fullDescription.style.display === 'none') {
-                    fullDescription.style.display = 'inline';
-                    shortDescription.style.display = 'none';
+                if (fullDescription.classList.contains('d-none')) {
+                    fullDescription.classList.remove('d-none');
+                    shortDescription.classList.add('d-none');
                     button.textContent = 'Zwiń';
                 } else {
-                    fullDescription.style.display = 'none';
-                    shortDescription.style.display = 'inline';
+                    fullDescription.classList.add('d-none');
+                    shortDescription.classList.remove('d-none');
                     button.textContent = 'Rozwiń';
                 }
             });
@@ -128,40 +135,26 @@
 </script>
 
 <style>
-    .w3-container {
-        max-height: 80vh;
-        overflow-y: auto;
-        margin-bottom: 20px;
-        width: 100%;
-    }
-
-    .w3-table-all {
-        width: 100%;
-        table-layout: fixed;
-    }
-
     .description-container {
         max-width: 100%;
     }
 
     .short-description {
         display: inline-block;
-        max-width: 100%;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
     .full-description {
-        display: none;
+        display: inline-block;
     }
 
-    .toggle-description {
-        margin-top: 5px;
-        padding: 0 5px;
-        cursor: pointer;
+    .table th, .table td {
+        vertical-align: middle;
+        padding: 8px;
     }
 
-    .w3-button {
-        width: 100%;
+    .table-responsive {
+        overflow-x: auto;
     }
 </style>

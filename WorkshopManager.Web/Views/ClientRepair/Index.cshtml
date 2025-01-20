@@ -1,25 +1,40 @@
-﻿<h1 style="text-align: center">Client</h1>
+﻿<h1 class="text-center">Client</h1>
 
-<a class="w3-bar-item w3-button w3-blue w3-large w3-round w3-padding w3-hover-opacity w3-hover-shadow"
-   asp-controller="ClientRepair" asp-action="RepairRequest">
-    Dodaj zlecenie
-</a>
+<div class="container">
+    <div class="row">
+        <div class="col-12 col-md-6 col-lg-4 mb-3">
+            <a class="w3-bar-item w3-button w3-blue w3-large w3-round w3-padding w3-hover-opacity w3-hover-shadow w-100"
+               asp-controller="ClientRepair" asp-action="RepairRequest">
+                Dodaj zlecenie
+            </a>
+        </div>
 
-<a class="w3-bar-item w3-button w3-green w3-large w3-round w3-padding w3-hover-opacity w3-hover-shadow"
-   asp-controller="ClientRepair" asp-action="UpdateContactInfo">
-    Edytuj Dane Kontaktowe
-</a>
+        <div class="col-12 col-md-6 col-lg-4 mb-3">
+            <a class="w3-bar-item w3-button w3-green w3-large w3-round w3-padding w3-hover-opacity w3-hover-shadow w-100"
+               asp-controller="ClientRepair" asp-action="UpdateContactInfo">
+                Edytuj dane kontaktowe
+            </a>
+        </div>
 
-<a class="w3-bar-item w3-button w3-yellow w3-large w3-round w3-padding w3-hover-opacity w3-hover-shadow"
-   asp-controller="ClientRepair" asp-action="PendingEstimates">
-    Oczekujące zlecenia
-</a>
+        <div class="col-12 col-md-6 col-lg-4 mb-3">
+            <a class="w3-bar-item w3-button w3-yellow w3-large w3-round w3-padding w3-hover-opacity w3-hover-shadow w-100"
+               asp-controller="ClientRepair" asp-action="PendingEstimates">
+                Oczekujące zlecenia
+            </a>
+        </div>
 
-<a class="w3-bar-item w3-button w3-gray w3-large w3-round w3-padding w3-hover-opacity w3-hover-shadow"
-   asp-controller="ClientRepair" asp-action="ActiveRepairs">
-    Aktywne zlecenia
-</a>
-<a class="w3-bar-item w3-button w3-red w3-large w3-round w3-padding w3-hover-opacity w3-hover-shadow"
-   asp-controller="ClientRepair" asp-action="CompletedRepairs">
-    Zakończone zlecenia
-</a>
+        <div class="col-12 col-md-6 col-lg-4 mb-3">
+            <a class="w3-bar-item w3-button w3-gray w3-large w3-round w3-padding w3-hover-opacity w3-hover-shadow w-100"
+               asp-controller="ClientRepair" asp-action="ActiveRepairs">
+                Aktywne zlecenia
+            </a>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-4 mb-3">
+            <a class="w3-bar-item w3-button w3-red w3-large w3-round w3-padding w3-hover-opacity w3-hover-shadow w-100"
+               asp-controller="ClientRepair" asp-action="CompletedRepairs">
+                Zakończone zlecenia
+            </a>
+        </div>
+    </div>
+</div>

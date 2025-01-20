@@ -1,12 +1,13 @@
 ﻿@model ActiveRepairsVM
 @using static WorkshopManager.Model.DataModels.RepairOrderStatusValue
 
-<h1 style="text-align: center">Aktywne zlecenia</h1>
+<h1 class="text-center mb-4">Aktywne zlecenia</h1>
 
-<div class="w3-container">
-        <table class="w3-table-all w3-centered w3-hoverable w3-striped w3-card-4" style="width: 100%; table-layout: fixed;">
-            <thead>
-                <tr class="w3-light-grey">
+<div class="container">
+    <div class="table-responsive">
+        <table class="table table-hover table-striped table-bordered text-center">
+            <thead class="table-light">
+                <tr>
                     <th>Numer rejestracyjny</th>
                     <th>Opis usterki</th>
                     <th>Data zgłoszenia</th>
@@ -27,10 +28,10 @@
                                     <span class="short-description">
                                         @(order.EntryIssueDescription.Substring(0, 100) + "...")
                                     </span>
-                                    <span class="full-description" style="display:none;">
+                                    <span class="full-description d-none">
                                         @order.EntryIssueDescription
                                     </span>
-                                    <button class="toggle-description w3-button w3-small w3-blue w3-round" type="button">Rozwiń</button>
+                                    <button class="toggle-description btn btn-sm btn-primary mt-2">Rozwiń</button>
                                 }
                                 else
                                 {
@@ -39,7 +40,6 @@
                             </div>
                         </td>
                         <td>@order.SubmissionDate.ToString("dd/MM/yyyy")</td>
-
                         <td>
                             @if (order.EntryEstimatedCost.HasValue)
                             {
@@ -50,27 +50,32 @@
                                 <span>Niewycenione</span>
                             }
                         </td>
-
                         <td>@order.StatusDescription</td>
-
                         <td>
-                            @if(order.Status == WorkshopManager.Model.DataModels.RepairOrderStatusValue.Accepted)
+                            @if (order.Status == Accepted)
                             {
                                 <a href="@Url.Action("AcceptedRepairDetails", "ClientRepair", new { id = order.Id })" class="w3-button w3-small w3-blue w3-round">Szczegóły</a>
-                            } 
-                            else if (order.Status == WorkshopManager.Model.DataModels.RepairOrderStatusValue.InProgress)
+                            }
+                            else if (order.Status == InProgress)
                             {
                                 <a href="@Url.Action("InProgressRepairDetails", "ClientRepair", new { id = order.Id })" class="w3-button w3-small w3-blue w3-round">Szczegóły</a>
                             }
                             else
                             {
+                                <span>Brak akcji</span>
                             }
-                    </td>
+                        </td>
                     </tr>
                 }
             </tbody>
         </table>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="@Url.Action("Index", "Home")" class="w3-button w3-small w3-blue w3-round">Powrót</a>
+    </div>
 </div>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const toggleButtons = document.querySelectorAll('.toggle-description');
@@ -81,13 +86,13 @@
                 const shortDescription = descriptionContainer.querySelector('.short-description');
                 const fullDescription = descriptionContainer.querySelector('.full-description');
 
-                if (fullDescription.style.display === 'none') {
-                    fullDescription.style.display = 'inline';
-                    shortDescription.style.display = 'none';
+                if (fullDescription.classList.contains('d-none')) {
+                    fullDescription.classList.remove('d-none');
+                    shortDescription.classList.add('d-none');
                     button.textContent = 'Zwiń';
                 } else {
-                    fullDescription.style.display = 'none';
-                    shortDescription.style.display = 'inline';
+                    fullDescription.classList.add('d-none');
+                    shortDescription.classList.remove('d-none');
                     button.textContent = 'Rozwiń';
                 }
             });
@@ -96,40 +101,17 @@
 </script>
 
 <style>
-    .w3-container {
-        max-height: 80vh;
-        overflow-y: auto;
-        margin-bottom: 20px;
-        width: 100%;
-    }
-
-    .w3-table-all {
-        width: 100%;
-        table-layout: fixed;
-    }
-
     .description-container {
         max-width: 100%;
     }
 
     .short-description {
         display: inline-block;
-        max-width: 100%;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
     .full-description {
-        display: none;
-    }
-
-    .toggle-description {
-        margin-top: 5px;
-        padding: 0 5px;
-        cursor: pointer;
-    }
-
-    .w3-button {
-        width: 100%;
+        display: inline-block;
     }
 </style>

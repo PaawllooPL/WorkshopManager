@@ -1,24 +1,30 @@
 ﻿@model AddRepairRequestVM
 
 <h1 style="text-align: center">Client</h1>
-<h3 style="text-align: center"> Dodaj nowe zlecenie </h3>
+<h3 style="text-align: center">Dodaj nowe zlecenie</h3>
 
-<form asp-action="RepairRequest" asp-controller="ClientRepair" method="post">
-    @Html.ValidationSummary()
+<div class="container">
+    <form asp-action="RepairRequest" asp-controller="ClientRepair" method="post">
+        @Html.ValidationSummary()
 
-    <div>
-        <label>Opis usterki</label>
-        @Html.TextAreaFor(model => model.EntryIssueDescription, new { rows = 5, cols = 40 })
+        <div class="form-group">
+            <label for="EntryIssueDescription">Opis usterki</label>
+            @Html.TextAreaFor(model => model.EntryIssueDescription, new { @class = "form-control", rows = 5, id = "EntryIssueDescription" })
+        </div>
+
+        <div class="form-group">
+            <label for="RegistrationNumber">Numer rejestracyjny</label>
+            @Html.EditorFor(model => model.RegistrationNumber, new { @class = "form-control", id = "RegistrationNumber" })
+        </div>
+
+        <div class="text-center" style="margin-top: 15px;">
+            <button type="submit" class="w3-button w3-blue w3-large w3-round w3-padding w3-hover-opacity w3-hover-shadow">
+                Dodaj zlecenie
+            </button>
+        </div>
+    </form>
+
+    <div class="text-center mt-4">
+        <a href="@Url.Action("Index", "Home")" class="w3-button w3-small w3-blue w3-round">Powrót</a>
     </div>
-
-    <div>
-        <label>Numer rejestracyjny</label>
-        @Html.EditorFor(model => model.RegistrationNumber)
-    </div>
-
-    <div style="margin-top: 15px;">
-        <button type="submit" class="w3-button w3-blue w3-large w3-round w3-padding w3-hover-opacity w3-hover-shadow">
-            Dodaj zlecenie
-        </button>
-    </div>
-</form>
+</div>

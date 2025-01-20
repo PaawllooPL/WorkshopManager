@@ -4,28 +4,29 @@
     ViewData["Title"] = "Szczegóły zlecenia";
 }
 
-<h1>Szczegóły zlecenia</h1>
+<h1 class="text-center mb-4">Szczegóły zlecenia</h1>
 
-<div>
+<div class="container">
+
     <hr />
     <dl class="row">
-        <dt class="col-sm-2">Id</dt>
-        <dd class="col-sm-10">@Html.DisplayFor(model => model.Id)</dd>
+        <dt class="col-12 col-sm-2">Id</dt>
+        <dd class="col-12 col-sm-10">@Html.DisplayFor(model => model.Id)</dd>
 
-        <dt class="col-sm-2">Numer rejestracyjny</dt>
-        <dd class="col-sm-10">@Html.DisplayFor(model => model.RegistrationNumber)</dd>
+        <dt class="col-12 col-sm-2">Numer rejestracyjny</dt>
+        <dd class="col-12 col-sm-10">@Html.DisplayFor(model => model.RegistrationNumber)</dd>
 
-        <dt class="col-sm-2">Opis usterki</dt>
-        <dd class="col-sm-10">@Html.DisplayFor(model => model.EntryIssueDescription)</dd>
+        <dt class="col-12 col-sm-2">Opis usterki</dt>
+        <dd class="col-12 col-sm-10">@Html.DisplayFor(model => model.EntryIssueDescription)</dd>
 
-        <dt class="col-sm-2">Data zgłoszenia</dt>
-        <dd class="col-sm-10">@Html.DisplayFor(model => model.SubmissionDate)</dd>
+        <dt class="col-12 col-sm-2">Data zgłoszenia</dt>
+        <dd class="col-12 col-sm-10">@Html.DisplayFor(model => model.SubmissionDate)</dd>
 
-        <dt class="col-sm-2">Status</dt>
-        <dd class="col-sm-10">@Html.DisplayFor(model => model.StatusDescription)</dd>
+        <dt class="col-12 col-sm-2">Status</dt>
+        <dd class="col-12 col-sm-10">@Html.DisplayFor(model => model.StatusDescription)</dd>
 
-        <dt class="col-sm-2">Szacunkowy koszt</dt>
-        <dd class="col-sm-10">
+        <dt class="col-12 col-sm-2">Szacunkowy koszt</dt>
+        <dd class="col-12 col-sm-10">
             @if (Model.EntryEstimatedCost.HasValue)
             {
                 @Model.EntryEstimatedCost.Value.ToString("C")
@@ -35,79 +36,86 @@
                 <span>Niewycenione</span>
             }
         </dd>
-        <dt class="col-sm-2">Obecny koszt</dt>
-        <dd class="col-sm-10">
+
+        <dt class="col-12 col-sm-2">Obecny koszt</dt>
+        <dd class="col-12 col-sm-10">
             <span>@(Model.RepairTasks.Aggregate(0m, (cost, rt) => rt.IsCompleted ? cost + rt.Cost : cost) + " zł")</span>
-         </dd>
+        </dd>
     </dl>
 
-    <h3>Czynności Naprawcze</h3>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th class="w-50">Opis</th>
-                <th>Szacowany koszt</th>
-                <th>Status</th>
-                <th>Akcje</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var task in Model.RepairTasks)
-            {
+    <h3>Czynności naprawcze</h3>
+    <div class="table-responsive">
+        <table class="table table-hover table-striped table-bordered text-center">
+            <thead class="table-light">
                 <tr>
-                    <td>@task.Id</td>
-                    <td>
-                        <div class="description-container">
-                            @if (task.Description.Length > 100)
-                            {
+                    <th>Id</th>
+                    <th>Opis</th>
+                    <th>Szacowany koszt</th>
+                    <th>Status</th>
+                    <th>Akcje</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var task in Model.RepairTasks)
+                {
+                    <tr>
+                        <td>@task.Id</td>
+                        <td>
+                            <div class="description-container">
+                                @if (task.Description.Length > 100)
+                                {
                                     <span class="short-description">
                                         @(task.Description.Substring(0, 100) + "...")
                                     </span>
-                                    <span class="full-description" style="display:none;">
+                                    <span class="full-description d-none">
                                         @task.Description
                                     </span>
-                                    <button class="toggle-description w3-button w3-small w3-blue w3-round" type="button">Rozwiń</button>
+                                    <button class="toggle-description btn btn-sm btn-primary mt-2">Rozwiń</button>
+                                }
+                                else
+                                {
+                                    <span>@task.Description</span>
+                                }
+                            </div>
+                        </td>
+                        <td>@task.Cost.ToString("C")</td>
+                        <td>
+                            @if (task.AcceptedByCustomer.HasValue)
+                            {
+                                @((task.AcceptedByCustomer.Value) ? task.IsCompleted ? "Zakończone" : "Zaakceptowane" : "Odrzucone")
                             }
                             else
                             {
-                                    <span>@task.Description</span>
+                                <span>Oczekujące</span>
                             }
-                        </div>
-                    </td>
-                    <td>@task.Cost.ToString("C")</td>
-                    <td>
-                        @if (task.AcceptedByCustomer.HasValue)
-                        {
-                            @((task.AcceptedByCustomer.Value) ? task.IsCompleted ? "Zakończone" : "Zaakceptowane" : "Odrzucone")
-                        }
-                        else
-                        {
-                            <span>Oczekujące</span>
-                        }
-                    </td>
-                    
-                    @if(@task.AcceptedByCustomer == null) 
-                    {
-                        <td>
-                            <div class="d-flex">
-                                <form asp-controller="RepairTask" asp-action="AcceptTask" asp-route-id="@task.Id" method="post" style="margin-right: 5px;">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="w3-button w3-green w3-round">Akceptuj</button>
-                                </form>
-
-                                <form asp-controller="RepairTask" asp-action="RejectTask" asp-route-id="@task.Id" method="post">
-                                        @Html.AntiForgeryToken()
-                                    <button type="submit" class="w3-button w3-red w3-round">Odrzuć</button>
-                                </form>
-                            </div>
                         </td>
 
-                    }
-                </tr>
-            }
-        </tbody>
-    </table>
+                        @if (@task.AcceptedByCustomer == null)
+                        {
+                            <td>
+                                <div class="d-flex">
+                                    <form asp-controller="RepairTask" asp-action="AcceptTask" asp-route-id="@task.Id" method="post" style="margin-right: 5px;">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="w3-button w3-green w3-round">Akceptuj</button>
+                                    </form>
+
+                                    <form asp-controller="RepairTask" asp-action="RejectTask" asp-route-id="@task.Id" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="w3-button w3-red w3-round">Odrzuć</button>
+                                    </form>
+                                </div>
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="@Url.Action("Index", "Home")" class="w3-button w3-small w3-blue w3-round">Powrót</a>
+    </div>
+
 </div>
 
 <script>
@@ -120,13 +128,13 @@
                 const shortDescription = descriptionContainer.querySelector('.short-description');
                 const fullDescription = descriptionContainer.querySelector('.full-description');
 
-                if (fullDescription.style.display === 'none') {
-                    fullDescription.style.display = 'inline';
-                    shortDescription.style.display = 'none';
+                if (fullDescription.classList.contains('d-none')) {
+                    fullDescription.classList.remove('d-none');
+                    shortDescription.classList.add('d-none');
                     button.textContent = 'Zwiń';
                 } else {
-                    fullDescription.style.display = 'none';
-                    shortDescription.style.display = 'inline';
+                    fullDescription.classList.add('d-none');
+                    shortDescription.classList.remove('d-none');
                     button.textContent = 'Rozwiń';
                 }
             });
@@ -138,14 +146,14 @@
     .description-container {
         max-width: 100%;
     }
+
     .short-description {
         display: inline-block;
-        max-width: 100%;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
     .full-description {
-        display: none;
+        display: inline-block;
     }
 </style>

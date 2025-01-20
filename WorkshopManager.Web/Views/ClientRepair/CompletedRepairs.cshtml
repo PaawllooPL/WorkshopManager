@@ -1,32 +1,40 @@
 ﻿@model IEnumerable<CompletedRepairVM>
 
+<h1 class="text-center mb-4">Zakończone naprawy</h1>
 
-<h1 style="text-align: center">Zakończone naprawy</h1>
+<div class="container">
 
-<div class="w3-container">
-    <table class="w3-table-all w3-centered w3-hoverable w3-striped w3-card-4" style="width: 100%; table-layout: fixed;">
-        <thead>
-            <tr class="w3-light-grey">
-			<th>Id</th>
-			<th>Numer rejestracyjny</th>
-			<th>Data rozpoczęcia naprawy</th>
-			<th>Data zakończenia naprawy</th>
-			<th>Szacunkowy koszt</th>
-			<th>Finalny koszt</th>
-		</tr>
-        </thead>
-        <tbody>
-            @foreach (var order in Model)
-            {
-                <tr>
-                    <td>@order.Id</td>
-                    <td>@order.RegistrationNumber</td>
-                    <td>@order.StartDate</td>
-                    <td>@order.EndDate</td>
-                    <td>@order.EntryEstimatedCost</td>
-                    <td>@order.FinalCost</td>
+    <div class="table-responsive">
+        <table class="w3-table-all w3-centered w3-hoverable w3-striped w3-card-4" style="width: 100%;">
+
+            <thead>
+                <tr class="w3-light-grey">
+                    <th>Id</th>
+                    <th>Numer rejestracyjny</th>
+                    <th>Data rozpoczęcia naprawy</th>
+                    <th>Data zakończenia naprawy</th>
+                    <th>Szacunkowy koszt</th>
+                    <th>Finalny koszt</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    <tr>
+                        <td>@order.Id</td>
+                        <td>@order.RegistrationNumber</td>
+                        <td>@order.StartDate</td>
+                        <td>@order.EndDate</td>
+                        <td>@order.EntryEstimatedCost</td>
+                        <td>@order.FinalCost</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="@Url.Action("Index", "Home")" class="w3-button w3-small w3-blue w3-round">Powrót</a>
+    </div>
 </div>

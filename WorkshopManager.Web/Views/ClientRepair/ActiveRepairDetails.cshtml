@@ -4,45 +4,50 @@
     ViewData["Title"] = "Szczegóły zlecenia";
 }
 
-<h1>Szczegóły zlecenia</h1>
+<h1 class="text-center mb-4">Szczegóły zlecenia</h1>
 
-<div>
+<div class="container">
     <hr />
     <dl class="row">
-        <dt class="col-sm-2">
+        <dt class="col-12 col-sm-4 col-md-3 fw-bold">
             Id
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-12 col-sm-8 col-md-9">
             @Html.DisplayFor(model => model.Id)
         </dd>
-        <dt class="col-sm-2">
+
+        <dt class="col-12 col-sm-4 col-md-3 fw-bold">
             Numer rejestracyjny
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-12 col-sm-8 col-md-9">
             @Html.DisplayFor(model => model.RegistrationNumber)
         </dd>
-        <dt class="col-sm-2">
+
+        <dt class="col-12 col-sm-4 col-md-3 fw-bold">
             Opis usterki
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-12 col-sm-8 col-md-9">
             @Html.DisplayFor(model => model.EntryIssueDescription)
         </dd>
-        <dt class="col-sm-2">
+
+        <dt class="col-12 col-sm-4 col-md-3 fw-bold">
             Data zgłoszenia
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-12 col-sm-8 col-md-9">
             @Html.DisplayFor(model => model.SubmissionDate)
         </dd>
-        <dt class="col-sm-2">
+
+        <dt class="col-12 col-sm-4 col-md-3 fw-bold">
             Status
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-12 col-sm-8 col-md-9">
             @Html.DisplayFor(model => model.StatusDescription)
         </dd>
-        <dt class="col-sm-2">
+
+        <dt class="col-12 col-sm-4 col-md-3 fw-bold">
             Szacunkowy koszt
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-12 col-sm-8 col-md-9">
             @if (Model.EntryEstimatedCost.HasValue)
             {
                 @Model.EntryEstimatedCost.Value.ToString("C")
@@ -53,4 +58,8 @@
             }
         </dd>
     </dl>
+
+    <div class="text-center mt-4">
+        <a href="@Url.Action("Index", "Home")" class="w3-button w3-small w3-blue w3-round">Powrót</a>
+    </div>
 </div>

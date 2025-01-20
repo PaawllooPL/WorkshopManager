@@ -1,19 +1,33 @@
-﻿<h1 style="text-align: center">Owner</h1>
+﻿<h1 class="text-center">Owner</h1>
+<div class="row d-flex justify-content-between">
+<div class="container">
+    <div class="row">
+        <div class="col-12 col-md-6 col-lg-3 mb-2">
+            <a class="w3-bar-item w3-button w3-blue w3-large w3-round w3-padding w3-hover-opacity w3-hover-shadow w-100"
+               asp-controller="OwnerRepair" asp-action="PendingRequests">
+                Zlecenia do akceptacji
+            </a>
+        </div>
 
-<a class="w3-bar-item w3-button w3-blue w3-large w3-round w3-padding w3-hover-opacity w3-hover-shadow"
-   asp-controller="OwnerRepair" asp-action="PendingRequests"> <!--kontroler OwnerRepair i akcja PendingRequests-->
-	Zlecenia do akceptacji
-</a>
-<a class="w3-bar-item w3-button w3-blue w3-large w3-round w3-padding w3-hover-opacity w3-hover-shadow"
-   asp-controller="Mechanic" asp-action="MechanicsList">
-	Lista mechaników
-</a>
-<a class="w3-bar-item w3-button w3-blue w3-large w3-round w3-padding w3-hover-opacity w3-hover-shadow"
-   asp-controller="OwnerRepair" asp-action="ActiveRepairs">
-	Aktywne zlecenia
-</a>
-<a class="w3-bar-item w3-button w3-blue w3-large w3-round w3-padding w3-hover-opacity w3-hover-shadow"
-   asp-controller="OwnerRepair" asp-action="CompletedRepairs">
-	Zakończone zlecenia
-</a>
+        <div class="col-12 col-md-6 col-lg-3 mb-2">
+            <a class="w3-bar-item w3-button w3-blue w3-large w3-round w3-padding w3-hover-opacity w3-hover-shadow w-100"
+               asp-controller="Mechanic" asp-action="MechanicsList">
+                Lista mechaników
+            </a>
+        </div>
 
+        <div class="col-12 col-md-6 col-lg-3 mb-2">
+            <a class="w3-bar-item w3-button w3-blue w3-large w3-round w3-padding w3-hover-opacity w3-hover-shadow w-100"
+               asp-controller="OwnerRepair" asp-action="ActiveRepairs">
+                Aktywne zlecenia
+            </a>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-3 mb-2">
+            <a class="w3-bar-item w3-button w3-blue w3-large w3-round w3-padding w3-hover-opacity w3-hover-shadow w-100"
+               asp-controller="OwnerRepair" asp-action="CompletedRepairs">
+                Zakończone zlecenia
+            </a>
+        </div>
+    </div>
+</div>

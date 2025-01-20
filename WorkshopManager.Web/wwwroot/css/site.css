@@ -8,10 +8,6 @@ html {
     }
 }
 
-@media (width: 1024px) {
-    .col-lg-3 {
-        width: 50%;
-    }
 
 
     .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {

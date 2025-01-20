@@ -294,7 +294,7 @@ namespace WorkshopManager.Web.Controllers
             _dbContext.Update(order);
             _dbContext.SaveChanges();
 
-            return RedirectToAction("InProgressRepairDetails", "OwnerRepair", new { id });
+            return RedirectToAction("CompletedRepairs", "OwnerRepair", new { id });
         }
 
         public IActionResult CompletedRepairs()

@@ -11,7 +11,7 @@ namespace WorkshopManager.Model.DataModels
         public int Id { get; set; }
         public Client Client { get; set; } = null!;
         public int ClientId { get; set; }
-        public Mechanic Mechanic { get; set; } = null!;
+        public Mechanic? Mechanic { get; set; } = null!;
         public int? MechanicId { get; set; }
         public RepairOrderStatusValue Status { get; set; }
         public IList<RepairTask> Tasks { get; set; } = null!;

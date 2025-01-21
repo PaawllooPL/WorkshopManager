@@ -1,0 +1,42 @@
+﻿@model IEnumerable<MechanicStatisticsVM>
+
+<h1 style="text-align: center">Statystyki mechaników</h1>
+
+<div class="container">
+
+    <div class="table-responsive">
+        <table class="w3-table-all w3-centered w3-hoverable w3-striped w3-card-4" style="width: 100%;">
+
+            <thead>
+                <tr class="w3-light-grey">
+                    <th>Id</th>
+                    <th>Imie</th>
+                    <th>Nazwisko</th>
+                    <th>Data zatrudnienia</th>
+                    <th>Przychód cały</th>
+                    <th>Przychód ostatnie 30 dni</th>
+                    <th>Przychód ostatnie 7 dni</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var mechanicStatistics in Model)
+                {
+                    <tr>
+                        <td>@mechanicStatistics.Id</td>
+                        <td>@mechanicStatistics.FirstName</td>
+                        <td>@mechanicStatistics.LastName</td>
+                        <td>@mechanicStatistics.EmploymentDate</td>
+                        <td>@mechanicStatistics.AllTimeEarnings</td>
+                        <td>@mechanicStatistics.Last30DaysEarnings</td>
+                        <td>@mechanicStatistics.Last7DaysEarnings</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="@Url.Action("Index", "Home")" class="w3-button w3-small w3-blue w3-round">Powrót</a>
+    </div>
+</div>

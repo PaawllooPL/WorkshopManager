@@ -91,9 +91,25 @@ app.Run();
             throw new Exception("Environmental variable is missing owner last name");
 
         var checkCurrentAdmin = await userManager.FindByEmailAsync(ownerEmail);
+        
 
         if (checkCurrentAdmin != null)
+        {
+            if(checkCurrentAdmin.PasswordHash != userManager.PasswordHasher.HashPassword(checkCurrentAdmin, ownerPassword))
+            {
+                try
+                {
+                    await userManager.RemovePasswordAsync(checkCurrentAdmin);
+                    await userManager.AddPasswordAsync(checkCurrentAdmin, ownerPassword);
+                } 
+                catch (Exception ex)
+                {
+                    throw new Exception("Could not update owner password.");
+                }
+
+            }
             return;
+        }
 
         var owner = Activator.CreateInstance<Owner>();
         owner.FirstName = ownerFirstName;

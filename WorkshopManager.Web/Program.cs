@@ -2,9 +2,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WorkshopManager.DAL.EF;
 using WorkshopManager.Model.DataModels;
-using DotNetEnv;
-using Microsoft.Extensions.Options;
 using WorkshopManager.Services;
+using System.Net.Mail;
+using System.Net;
+using WorkshopManager.Web.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +37,11 @@ builder.Services.AddScoped<StatusDescriptionService>();
 builder.Services.AddTransient(typeof(ILogger), typeof(Logger<Program>));
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+builder.Services.AddSingleton<SmtpSettings>();
+builder.Services.AddScoped<EmailNotificationService>();
+
+
 
 var app = builder.Build();
 
@@ -74,12 +80,18 @@ app.Run();
     {
         var userManager = scope.ServiceProvider.GetService<UserManager<Owner>>()!;
         var roleManager = scope.ServiceProvider.GetService<RoleManager<Role>>()!;
+        var smtpSettings = scope.ServiceProvider.GetService<SmtpSettings>()!;
 
         DotNetEnv.Env.TraversePath().Load();
         var ownerEmail = System.Environment.GetEnvironmentVariable("OWNER_EMAIL");
         var ownerPassword = System.Environment.GetEnvironmentVariable("OWNER_PASSWORD");
         var ownerFirstName = System.Environment.GetEnvironmentVariable("OWNER_FIRSTNAME");
         var ownerLastName = System.Environment.GetEnvironmentVariable("OWNER_LASTNAME");
+        
+        var smtpEmail = System.Environment.GetEnvironmentVariable("SMTP_EMAIL");
+        var smtpPassword = System.Environment.GetEnvironmentVariable("SMTP_PASSWORD");
+        var smtpHost = System.Environment.GetEnvironmentVariable("SMTP_HOST");
+        var smtpPort = System.Environment.GetEnvironmentVariable("SMTP_PORT");
 
         if (String.IsNullOrEmpty(ownerEmail))
             throw new Exception("Environmental variable is missing owner email");
@@ -90,6 +102,18 @@ app.Run();
         if (String.IsNullOrEmpty(ownerLastName))
             throw new Exception("Environmental variable is missing owner last name");
 
+        if(smtpPort != null)
+        {
+            if(ValidateSmtpCredentials(smtpHost ?? "", int.Parse(smtpPort), smtpEmail ?? "", smtpPassword ?? ""))
+            {
+                smtpSettings.host = smtpHost!;
+                smtpSettings.port = int.Parse(smtpPort);
+                smtpSettings.email = smtpEmail!;
+                smtpSettings.password = smtpPassword!;
+                smtpSettings.isActive = true;
+            }
+        }
+        
         var checkCurrentAdmin = await userManager.FindByEmailAsync(ownerEmail);
         
 
@@ -128,5 +152,27 @@ app.Run();
         }
 
         throw new Exception("Seeding owner account went wrong");
+    }
+}
+
+bool ValidateSmtpCredentials(string smtpHost, int smtpPort, string email, string password)
+{
+    try
+    {
+        using (var client = new SmtpClient(smtpHost, smtpPort))
+        {
+            client.EnableSsl = true;
+            client.Credentials = new NetworkCredential(email, password);
+            client.Timeout = 10000;
+
+            client.Send(new MailMessage(email, email, "Test SMTP", "Test po³¹czenia SMTP. " + DateTime.Now.ToString()));
+        }
+
+        return true;
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"B³¹d SMTP: {ex.Message}");
+        return false;
     }
 }

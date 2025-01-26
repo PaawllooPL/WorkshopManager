@@ -7,16 +7,19 @@ using System.Linq;
 using WorkshopManager.ViewModels.VM;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
+using WorkshopManager.Services;
 
 namespace WorkshopManager.Web.Controllers
 {
     public class RepairTaskController : BaseController
     {
         private readonly ApplicationDbContext _dbContext;
+        private readonly EmailNotificationService _emailNotificationService;
 
-        public RepairTaskController(ILogger<RepairTaskController> logger, ApplicationDbContext context) : base(logger)
+        public RepairTaskController(ILogger<RepairTaskController> logger, ApplicationDbContext context, EmailNotificationService emailNotificationService) : base(logger)
         {
             _dbContext = context;
+            _emailNotificationService = emailNotificationService;
         }
 
         // Akcja do zaakceptowania zadania naprawczego
@@ -83,6 +86,7 @@ namespace WorkshopManager.Web.Controllers
             };
             order.Tasks.Add(repairTask);
             _dbContext.SaveChanges();
+            _emailNotificationService.SendAddedRepairTaskNotification(vm.RepairId);
 
 			return RedirectToAction("InProgressRepairDetails", "OwnerRepair", new { id = vm.RepairId });
         }

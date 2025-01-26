@@ -17,6 +17,7 @@
 				<th>Data zakończenia naprawy</th>
 				<th>Szacunkowy koszt</th>
 				<th>Finalny koszt</th>
+				<th>Akcje</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -40,6 +41,12 @@
 					</td>
 					<td>
 						@Html.DisplayFor(modelItem => item.FinalCost)
+					</td>
+					<td>
+						<a class="w3-bar-item w3-button w3-blue w3-small w3-round w3-padding w3-hover-opacity w3-hover-shadow"
+						   asp-controller="OwnerRepair" asp-action="GenerateRepairSummary" asp-route-id="@item.Id">
+							Pobierz raport
+						</a>
 					</td>
 				</tr>
 			}

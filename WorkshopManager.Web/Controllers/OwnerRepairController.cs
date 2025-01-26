@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using iText.Kernel.Pdf;
+using iText.Layout;
+using iText.Layout.Element;
+using iText.Layout.Properties;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -14,10 +18,17 @@ namespace WorkshopManager.Web.Controllers
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly StatusDescriptionService _statusDescriptionService;
-        public OwnerRepairController(ILogger logger, ApplicationDbContext context, StatusDescriptionService statusDescriptionService) : base(logger)
+        private readonly EmailNotificationService _emailNotificationService;
+
+        public OwnerRepairController(
+            ILogger logger, 
+            ApplicationDbContext context, 
+            StatusDescriptionService statusDescriptionService, 
+            EmailNotificationService emailNotificationService) : base(logger)
         {
             _dbContext = context;
             _statusDescriptionService = statusDescriptionService;
+            _emailNotificationService = emailNotificationService;
         }
 
         public IActionResult Index()
@@ -102,6 +113,7 @@ namespace WorkshopManager.Web.Controllers
             repairOrder.Status = RepairOrderStatusValue.ClientApproval; // Zmiana statusu na ClientApproval
 
             _dbContext.SaveChanges();
+            _emailNotificationService.SendRepairCostEstimatedNotification(viewModel.Id);
 
             return RedirectToAction("PendingRequests");
         }
@@ -265,6 +277,7 @@ namespace WorkshopManager.Web.Controllers
             repair.StartDate = DateTime.Now;
 
             _dbContext.SaveChanges();
+            _emailNotificationService.SendStartRepairNotification(formData.RepairId);
 
             return RedirectToAction("ActiveRepairs");
         }
@@ -293,6 +306,7 @@ namespace WorkshopManager.Web.Controllers
             
             _dbContext.Update(order);
             _dbContext.SaveChanges();
+            _emailNotificationService.SendRepairCompletedNotification(id);
 
             return RedirectToAction("CompletedRepairs", "OwnerRepair", new { id });
         }
@@ -320,6 +334,90 @@ namespace WorkshopManager.Web.Controllers
             }).ToList();
 
             return View("CompletedRepairs", viewModel);
+        }
+
+        public IActionResult GenerateRepairSummary(int id)
+        {
+            var repair = _dbContext.RepairOrders
+                                    .Include(ro => ro.Client)
+                                    .Include(ro => ro.Mechanic)
+                                    .Include(ro => ro.Tasks)
+                                    .FirstOrDefault(ro => ro.Id == id);
+            if(repair == null)
+            {
+                return NotFound();
+            }
+                                                    
+            using (var memoryStream = new MemoryStream())
+            {
+                // Tworzenie dokumentu PDF
+                using (var writer = new PdfWriter(memoryStream))
+                using (var pdf = new PdfDocument(writer))
+                {
+                    var document = new Document(pdf);
+
+                    var header = new Paragraph("Podsumowanie naprawy")
+                        .SetFontSize(24)
+                        .SetTextAlignment(TextAlignment.CENTER);
+                    document.Add(header);
+
+                    var repairHeader = new Paragraph("Informacje o naprawie")
+                        .SetFontSize(16)
+                        .SetTextAlignment(TextAlignment.CENTER);
+                    document.Add(repairHeader);
+
+                    //var clientFirstName = new Paragraph()
+                    var repairInfoTable = new Table(9);
+                    repairInfoTable.AddHeaderCell("Id");
+                    repairInfoTable.AddHeaderCell("Imie");
+                    repairInfoTable.AddHeaderCell("Nazwisko");
+                    repairInfoTable.AddHeaderCell("Numer telefonu");
+                    repairInfoTable.AddHeaderCell("Numer rejestracyjny");
+                    repairInfoTable.AddHeaderCell("Rozpoczecie naprawy");
+                    repairInfoTable.AddHeaderCell("Zakonczenie naprawy");
+                    repairInfoTable.AddHeaderCell("Wstepna wycena");
+                    repairInfoTable.AddHeaderCell("Finalny koszt");
+
+                    repairInfoTable.AddCell(repair.Id.ToString());
+                    repairInfoTable.AddCell(!String.IsNullOrWhiteSpace(repair.Client.FirstName) ? repair.Client.FirstName : "Nie podano");
+                    repairInfoTable.AddCell(!String.IsNullOrWhiteSpace(repair.Client.LastName) ? repair.Client.LastName : "Nie podano");
+                    repairInfoTable.AddCell(!String.IsNullOrWhiteSpace(repair.Client.PhoneNumber) ? repair.Client.PhoneNumber : "Nie podano");
+                    repairInfoTable.AddCell(repair.RegistrationNumber);
+                    repairInfoTable.AddCell(repair.StartDate.ToString());
+                    repairInfoTable.AddCell(repair.EndDate.ToString());
+                    repairInfoTable.AddCell(repair.EntryEstimatedCost.ToString());
+                    repairInfoTable.AddCell(repair.Tasks.Aggregate(0m, (finalCost, rt) => rt.IsCompleted ? (finalCost + rt.Cost) : finalCost).ToString());
+                    // Dodanie tabeli do dokumentu
+                    document.Add(repairInfoTable);
+
+                    var repairTasksHeader = new Paragraph("Lista czynnosci naprawczych")
+                        .SetFontSize(16)
+                        .SetTextAlignment(TextAlignment.CENTER);
+                    document.Add(repairTasksHeader);
+
+                    var repairTasksTable = new Table(4);
+                    repairTasksTable.AddHeaderCell("Cena");
+                    repairTasksTable.AddHeaderCell("Opis");
+                    repairTasksTable.AddHeaderCell("Zaakceptowane przez klienta?");
+                    repairTasksTable.AddHeaderCell("Wykonane?");
+
+                    foreach(var task in repair.Tasks)
+                    {
+                        repairTasksTable.AddCell(task.Cost.ToString());
+                        repairTasksTable.AddCell(task.Description);
+                        repairTasksTable.AddCell(task.AcceptedByCustomer == true ? "tak" : "nie");
+                        repairTasksTable.AddCell(task.IsCompleted == true ? "tak" : "nie");
+                    }
+                    document.Add(repairTasksTable);
+
+                    document.Close();
+                }
+
+                // Zwrócenie PDF do pobrania bez przenoszenia do nowego okna
+                var fileBytes = memoryStream.ToArray();
+                var fileName = $"raport_naprawy_{repair.RegistrationNumber}_{repair.EndDate}.pdf";
+                return File(fileBytes, "application/pdf", fileName);
+            }
         }
     }
 }
